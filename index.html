@@ -65,7 +65,7 @@
                 const objectURL = URL.createObjectURL(file);
                 audio.src = objectURL;
             }
-        }
+        }); // Здесь была пропущена закрывающая скобка.
 
         // Функция для обработки события перетаскивания файла
         function dropHandler(event) {
@@ -89,3 +89,4 @@
     </script>
 </body>
 </html>
+
