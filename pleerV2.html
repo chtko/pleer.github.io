@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Музыкальный плеер</title>
+</head>
+<body>
+    <h1>Музыкальный плеер</h1>
+    <audio id="audio" controls>
+        <source src="" type="audio/mp3">
+        <source src="" type="audio/ogg">
+        <source src="" type="audio/wav">
+        <source src="" type="audio/mp4">
+        <source src="" type="audio/x-m4a">
+    </audio>
+
+    <div>
+        <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a" id="audioFile" style="display: none">
+        <button onclick="document.getElementById('audioFile').click()">Загрузить музыку</button>
+    </div>
+    
+    <div>
+        <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио">
+        <button onclick="playAudioFromURL()">Воспроизвести музыку интернет радио по URL</button>
+    </div>
+
+    <!-- Добавляем область для перетаскивания файла -->
+    <div id="dropArea" style="border: 2px dashed #fff; padding: 20px; text-align: center; width: 100%; height: 100vh;" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <p style="color: #fff; font-size: 18px;">Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
+    </div>
+    
+    <script>
+        const audio = document.getElementById('audio');
+        const audioFile = document.getElementById('audioFile');
+        const audioURL = document.getElementById('audioURL');
+        const dropArea = document.getElementById('dropArea');
+
+        // Устанавливаем начальную громкость в 25%
+        audio.volume = 0.25;
+
+        // Функция для воспроизведения музыки по URL
+        function playAudioFromURL() {
+            const audioURLValue = audioURL.value;
+            audio.src = audioURLValue;
+        }
+
+        audioFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const objectURL = URL.createObjectURL(file);
+                audio.src = objectURL;
+            }
+        });
+
+        // Функция для обработки события перетаскивания файла
+        function dropHandler(event) {
+            event.preventDefault();
+            const file = event.dataTransfer.files[0];
+            if (file) {
+                const objectURL = URL.createObjectURL(file);
+                audio.src = objectURL;
+            }
+        }
+
+        // Функция для обработки события "dragover" (перетаскивания над областью)
+        function dragOverHandler(event) {
+            event.preventDefault();
+        }
+
+        // Обработка попытки закрытия сайта
+        window.addEventListener('beforeunload', function (e) {
+            e.returnValue = 'Вы точно хотите закрыть сайт? Музыка перестанет играть, и плеер будет очищен, но файл останется на вашем ПК.';
+        });
+    </script>
+</body>
+</html>
+
