@@ -24,13 +24,19 @@
 </head>
 <body>
     <h1>Музыкальный плеер</h1>
-    <audio id="audio" controls volume="0.25">
+    
+    <audio id="audio" controls>
         <source src="" type="audio/mp3">
         <source src="" type="audio/ogg">
         <source src="" type="audio/wav">
         <source src="" type="audio/mp4">
         <source src="" type="audio/x-m4a">
     </audio>
+
+    <script>
+        const audio = document.getElementById('audio');
+        audio.volume = 0.25; // Устанавливаем начальную громкость в 25%
+    </script>
 
     <div>
         <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a" id="audioFile" style="display: none">
@@ -65,7 +71,7 @@
                 const objectURL = URL.createObjectURL(file);
                 audio.src = objectURL;
             }
-        }); // Здесь была пропущена закрывающая скобка.
+        });
 
         // Функция для обработки события перетаскивания файла
         function dropHandler(event) {
@@ -89,4 +95,3 @@
     </script>
 </body>
 </html>
-
