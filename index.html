@@ -6,6 +6,15 @@
         body {
             background-color: white; /* Белый фон */
         }
+
+        /* Стили для области перетаскивания файла */
+        #dropArea {
+            border: 2px dashed #fff;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            height: 100vh;
+        }
     </style>
 </head>
 <body>
@@ -34,16 +43,18 @@
         <button onclick="playAudioFromURL()">Воспроизвести музыку интернет радио по URL</button>
     </div>
 
-   <!-- Добавляем область для перетаскивания файла -->
-    <div id="dropArea" style="border: 2px dashed #fff; padding: 20px; text-align: center; width: 100%; height: 100vh;" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-        <p style="color: #fff; font-size: 18px;">Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
+    <!-- Область для перетаскивания файла -->
+    <div 
+        id="dropArea" 
+        ondrop="dropHandler(event);" 
+        ondragover="dragOverHandler(event);" 
+        ondragleave="dragLeaveHandler(event);">
+        <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
     </div>
     
     <script>
-        const audio = document.getElementById('audio');
         const audioFile = document.getElementById('audioFile');
         const audioURL = document.getElementById('audioURL');
-        const dropArea = document.getElementById('dropArea');
 
         // Функция для воспроизведения музыки по URL
         function playAudioFromURL() {
@@ -62,7 +73,6 @@
         // Функция для обработки события перетаскивания файла
         function dropHandler(event) {
             event.preventDefault();
-            dropArea.style.backgroundColor = 'lightblue'; // Изменяем цвет фона
             const file = event.dataTransfer.files[0];
             if (file) {
                 const objectURL = URL.createObjectURL(file);
@@ -73,17 +83,19 @@
         // Функция для обработки события "dragover" (перетаскивания над областью)
         function dragOverHandler(event) {
             event.preventDefault();
+            dropArea.style.backgroundColor = 'lightblue'; // Изменяем цвет фона
         }
 
         // Функция для возврата фона в исходное состояние
         function dragLeaveHandler(event) {
+            event.preventDefault();
             dropArea.style.backgroundColor = 'white';
         }
 
         // Обработка попытки закрытия сайта
         window.addEventListener('beforeunload', function (e) {
             e.returnValue = 'Вы точно хотите закрыть сайт? Музыка перестанет играть, и плеер будет очищен, но файл останется на вашем ПК.';
-        });
+        }
     </script>
 </body>
 </html>
