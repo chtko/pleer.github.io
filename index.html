@@ -112,22 +112,40 @@
             dropArea.style.backgroundColor = 'white';
         }
 
+        // Запрашиваем разрешение на уведомления
+        if ('Notification' in window) {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    // Разрешение предоставлено
+                }
+            });
+        }
+
+        // Обработчик события выхода из браузера
         window.addEventListener('beforeunload', function (e) {
-            e.returnValue = 'Вы точно хотите закрыть сайт? Музыка перестанет играть, и плеер будет очищен, но файл останется на вашем ПК.';
-            
-            // Запрашиваем разрешение для уведомлений
-            if ('Notification' in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        // Разрешение предоставлено
-                        new Notification('Не забудьте выключить плеер', {
-                            body: 'Чтобы музыка не играла на фоне.'
-                        });
-                    }
+            // Проверяем, было ли предоставлено разрешение на уведомления
+            if (Notification.permission === 'granted') {
+                // Отправляем уведомление
+                new Notification('Не забудьте выключить плеер', {
+                    body: 'Чтобы музыка не играла на фоне.'
                 });
+            }
+        });
+
+        // Слушаем события клавиш
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.key === 'v') {
+                // Проверяем, находится ли фокус на поле ввода URL интернет-радио
+                if (document.activeElement !== audioURL) {
+                    // Получаем содержимое буфера обмена
+                    navigator.clipboard.readText().then(clipText => {
+                        // Предполагаем, что буфер содержит URL аудио
+                        audioURL.value = clipText;
+                        audioURL.focus();
+                    });
+                }
             }
         });
     </script>
 </body>
 </html>
-
