@@ -35,13 +35,10 @@
     </div>
 
     <!-- Область для перетаскивания файла с обработчиками событий и стилями -->
-    <div 
-        id="dropArea" 
-        style="border: 2px dashed #fff; padding: 20px; text-align: center; width: 100%; height: 100vh;"
-        ondrop="dropHandler(event);"
-        ondragover="dragOverHandler(event);"
-        ondragleave="dragLeaveHandler(event);"
-    >
+     <!-- Добавляем область для перетаскивания файла -->
+    <div id="dropArea" style="border: 2px dashed #fff; padding: 20px; text-align: center; width: 100%; height: 100vh;" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <p style="color: #fff; font-size: 18px;">Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
+    </div>
         <p style="color: #fff; font-size: 18px;">Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
     </div>
     
