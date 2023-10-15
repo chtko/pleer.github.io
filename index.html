@@ -6,23 +6,6 @@
         body {
             background-color: white; /* Белый фон */
         }
-
-        /* Стили для области перетаскивания файла */
-        #dropArea {
-            border: 2px dashed #fff;
-            width: 100%;
-            height: 100vh;
-            padding: 20px;
-            text-align: center;
-            background-color: white; /* Белый фон по умолчанию */
-        }
-
-        /* Медиа-запрос для экранов шире 600px */
-        @media (min-width: 600px) {
-            #dropArea {
-                padding: 40px; /* Увеличьте отступы на более широких экранах */
-            }
-        }
     </style>
 </head>
 <body>
@@ -51,15 +34,20 @@
         <button onclick="playAudioFromURL()">Воспроизвести музыку интернет радио по URL</button>
     </div>
 
-    <!-- Добавляем обработчики событий для изменения фона зоны -->
-    <div id="dropArea">
-        <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
+    <!-- Область для перетаскивания файла с обработчиками событий и стилями -->
+    <div 
+        id="dropArea" 
+        style="border: 2px dashed #fff; padding: 20px; text-align: center; width: 100%; height: 100vh;"
+        ondrop="dropHandler(event);"
+        ondragover="dragOverHandler(event);"
+        ondragleave="dragLeaveHandler(event);"
+    >
+        <p style="color: #fff; font-size: 18px;">Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
     </div>
     
     <script>
         const audioFile = document.getElementById('audioFile');
         const audioURL = document.getElementById('audioURL');
-        const dropArea = document.getElementById('dropArea');
 
         // Функция для воспроизведения музыки по URL
         function playAudioFromURL() {
@@ -73,7 +61,7 @@
                 const objectURL = URL.createObjectURL(file);
                 audio.src = objectURL;
             }
-        });
+        }
 
         // Функция для обработки события перетаскивания файла
         function dropHandler(event) {
@@ -83,8 +71,6 @@
             if (file) {
                 const objectURL = URL.createObjectURL(file);
                 audio.src = objectURL;
-                audioFile.files = event.dataTransfer.files; // Вызываем событие change для input
-                audioFile.dispatchEvent(new Event('change'));
             }
         }
 
@@ -97,10 +83,6 @@
         function dragLeaveHandler(event) {
             dropArea.style.backgroundColor = 'white';
         }
-
-        // Обработка событий dragenter и dragleave
-        dropArea.addEventListener('dragenter', dropHandler);
-        dropArea.addEventListener('dragleave', dragLeaveHandler);
 
         // Обработка попытки закрытия сайта
         window.addEventListener('beforeunload', function (e) {
