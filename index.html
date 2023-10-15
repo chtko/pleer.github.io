@@ -44,11 +44,10 @@
         <button onclick="playAudioFromURL()">Воспроизвести музыку интернет радио по URL</button>
     </div>
 
-    <!-- Область для перетаскивания файла -->
-    <div 
-        id="dropArea" 
+    <!-- Добавляем область для перетаскивания файла -->
+    <div id="dropArea" 
         ondrop="dropHandler(event);" 
-        ondragover="dragOverHandler(event);" 
+        ondragover="dragOverHandler(event);"
         ondragleave="dragLeaveHandler(event);">
         <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
     </div>
@@ -98,8 +97,7 @@
         // Обработка попытки закрытия сайта
         window.addEventListener('beforeunload', function (e) {
             e.returnValue = 'Вы точно хотите закрыть сайт? Музыка перестанет играть, и плеер будет очищен, но файл останется на вашем ПК.';
-        }
+        });
     </script>
 </body>
-</html>
-
+</html>>
