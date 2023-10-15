@@ -35,12 +35,12 @@
     </script>
 
     <div>
-        <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a" id="audioFile" style="display: none">
+        <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a,.m3u" id="audioFile" style="display: none">
         <button onclick="document.getElementById('audioFile').click()">Загрузить музыку</button>
     </div>
     
     <div>
-        <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио">
+        <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио или M3U-плейлист">
         <button onclick="playInternetRadioWithRetries()">Воспроизвести музыку интернет радио по URL</button> <!-- Название функции не меняется -->
     </div>
 
@@ -56,12 +56,11 @@
         const audioFile = document.getElementById('audioFile');
         const audioURL = document.getElementById('audioURL');
         const dropArea = document.getElementById('dropArea');
+        let retryAttempts = 3; // Количество попыток воспроизведения
 
         // Измененная функция для воспроизведения музыки по URL с попытками
         function playInternetRadioWithRetries() {
-            const audioURLValue = audioURL.value;
             retryAttempts = 3; // Сбрасываем число попыток при каждой попытке
-
             tryAudio(); // Запускаем первую попытку
         }
 
@@ -117,4 +116,3 @@
     </script>
 </body>
 </html>
-
