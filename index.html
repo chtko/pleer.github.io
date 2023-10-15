@@ -41,7 +41,7 @@
     
     <div>
         <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио">
-        <button onclick="playInternetRadio()">Воспроизвести музыку интернет радио по URL</button> <!-- Название функции не меняется -->
+        <button onclick="playInternetRadioWithRetries()">Воспроизвести музыку интернет радио по URL</button> <!-- Название функции не меняется -->
     </div>
 
     <!-- Добавляем область для перетаскивания файла -->
@@ -57,15 +57,30 @@
         const audioURL = document.getElementById('audioURL');
         const dropArea = document.getElementById('dropArea');
 
-        // Измененная функция для воспроизведения музыки по URL с таймаутом
-        function playInternetRadio() {
+        // Измененная функция для воспроизведения музыки по URL с попытками
+        function playInternetRadioWithRetries() {
             const audioURLValue = audioURL.value;
-            const timeout = 10000; // 10 секунд
+            retryAttempts = 3; // Сбрасываем число попыток при каждой попытке
 
-            audio.src = audioURLValue; // Сначала устанавливаем URL
-            setTimeout(function() {
-                audio.play(); // Затем воспроизводим аудио
-            }, timeout);
+            tryAudio(); // Запускаем первую попытку
+        }
+
+        // Функция для попытки воспроизведения аудио
+        function tryAudio() {
+            audio.src = audioURL.value;
+            audio.play()
+                .then(() => {
+                    // Если воспроизведение успешно, не нужно больше попыток
+                    retryAttempts = 0;
+                })
+                .catch(error => {
+                    if (retryAttempts > 0) {
+                        retryAttempts--;
+                        // Если есть еще попытки, пробуем снова через 3 секунды
+                        setTimeout(tryAudio, 3000);
+                    }
+                    // Здесь вы можете добавить обработку ошибок, например, вывод сообщения об ошибке
+                });
         }
 
         audioFile.addEventListener('change', function(e) {
@@ -102,3 +117,4 @@
     </script>
 </body>
 </html>
+
