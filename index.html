@@ -9,11 +9,19 @@
 
         /* Стили для области перетаскивания файла */
         #dropArea {
-            border: 2px dashed #fff; /* Добавляем контур (подсветку) */
-            width: 100%; /* 100% ширины экрана */
-            height: 100vh; /* 100% высоты экрана */
+            border: 2px dashed #fff;
+            width: 100%;
+            height: 100vh;
             padding: 20px;
             text-align: center;
+            background-color: white; /* Белый фон по умолчанию */
+        }
+
+        /* Медиа-запрос для экранов шире 600px */
+        @media (min-width: 600px) {
+            #dropArea {
+                padding: 40px; /* Увеличьте отступы на более широких экранах */
+            }
         }
     </style>
 </head>
@@ -43,7 +51,7 @@
         <button onclick="playAudioFromURL()">Воспроизвести музыку интернет радио по URL</button>
     </div>
 
-    <!-- Добавляем адаптивную область для перетаскивания файла -->
+    <!-- Добавляем обработчики событий для изменения фона зоны -->
     <div id="dropArea">
         <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
     </div>
@@ -70,6 +78,7 @@
         // Функция для обработки события перетаскивания файла
         function dropHandler(event) {
             event.preventDefault();
+            dropArea.style.backgroundColor = 'lightblue'; // Изменяем цвет фона
             const file = event.dataTransfer.files[0];
             if (file) {
                 const objectURL = URL.createObjectURL(file);
@@ -82,6 +91,15 @@
             event.preventDefault();
         }
 
+        // Функция для возврата фона в исходное состояние
+        function dragLeaveHandler(event) {
+            dropArea.style.backgroundColor = 'white';
+        }
+
+        // Обработка событий dragenter и dragleave
+        dropArea.addEventListener('dragenter', dropHandler);
+        dropArea.addEventListener('dragleave', dragLeaveHandler);
+
         // Обработка попытки закрытия сайта
         window.addEventListener('beforeunload', function (e) {
             e.returnValue = 'Вы точно хотите закрыть сайт? Музыка перестанет играть, и плеер будет очищен, но файл останется на вашем ПК.';
@@ -89,3 +107,4 @@
     </script>
 </body>
 </html>
+
