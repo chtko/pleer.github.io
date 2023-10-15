@@ -41,7 +41,7 @@
     
     <div>
         <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио">
-        <button onclick="playAudioFromURL()">Воспроизвести музыку интернет радио по URL</button>
+        <button onclick="playAudioFromURL()">Воспроизвести музыку интернет радио по URL</button>  <!-- Изменено название функции -->
     </div>
 
     <!-- Добавляем область для перетаскивания файла -->
@@ -57,10 +57,15 @@
         const audioURL = document.getElementById('audioURL');
         const dropArea = document.getElementById('dropArea');
 
-        // Функция для воспроизведения музыки по URL
+        // Измененная функция для воспроизведения музыки по URL с таймаутом
         function playAudioFromURL() {
             const audioURLValue = audioURL.value;
-            audio.src = audioURLValue;
+            const timeout = 10000; // 10 секунд
+
+            audio.src = audioURLValue; // Сначала устанавливаем URL
+            setTimeout(function() {
+                audio.play(); // Затем воспроизводим аудио
+            }, timeout);
         }
 
         audioFile.addEventListener('change', function(e) {
@@ -71,10 +76,9 @@
             }
         });
 
-        // Функция для обработки события перетаскивания файла
         function dropHandler(event) {
             event.preventDefault();
-            dropArea.style.backgroundColor = 'white'; // Возвращаем цвет фона в исходное состояние
+            dropArea.style.backgroundColor = 'white';
             const file = event.dataTransfer.files[0];
             if (file) {
                 const objectURL = URL.createObjectURL(file);
@@ -82,22 +86,19 @@
             }
         }
 
-        // Функция для обработки события "dragover" (перетаскивания над областью)
         function dragOverHandler(event) {
             event.preventDefault();
-            dropArea.style.backgroundColor = 'lightblue'; // Изменяем цвет фона
+            dropArea.style.backgroundColor = 'lightblue';
         }
 
-        // Функция для возврата фона в исходное состояние
         function dragLeaveHandler(event) {
             event.preventDefault();
             dropArea.style.backgroundColor = 'white';
         }
 
-        // Обработка попытки закрытия сайта
         window.addEventListener('beforeunload', function (e) {
             e.returnValue = 'Вы точно хотите закрыть сайт? Музыка перестанет играть, и плеер будет очищен, но файл останется на вашем ПК.';
         });
     </script>
 </body>
-</html>>
+</html>
