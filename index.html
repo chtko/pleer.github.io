@@ -14,6 +14,7 @@
             text-align: center;
             width: 100%;
             height: 100vh;
+            background-color: white; /* Белый фон по умолчанию */
         }
     </style>
 </head>
@@ -55,6 +56,7 @@
     <script>
         const audioFile = document.getElementById('audioFile');
         const audioURL = document.getElementById('audioURL');
+        const dropArea = document.getElementById('dropArea');
 
         // Функция для воспроизведения музыки по URL
         function playAudioFromURL() {
@@ -68,11 +70,12 @@
                 const objectURL = URL.createObjectURL(file);
                 audio.src = objectURL;
             }
-        }
+        });
 
         // Функция для обработки события перетаскивания файла
         function dropHandler(event) {
             event.preventDefault();
+            dropArea.style.backgroundColor = 'white'; // Возвращаем цвет фона в исходное состояние
             const file = event.dataTransfer.files[0];
             if (file) {
                 const objectURL = URL.createObjectURL(file);
@@ -99,3 +102,4 @@
     </script>
 </body>
 </html>
+
