@@ -10,15 +10,10 @@
         /* Стили для области перетаскивания файла */
         #dropArea {
             border: 2px dashed #fff;
+            width: 100%; /* 100% ширины экрана */
+            height: 100vh; /* 100% высоты экрана */
             padding: 20px;
             text-align: center;
-        }
-        
-        /* Стили для адаптивной зоны приёма файла */
-        @media (max-width: 600px) {
-            #dropArea {
-                padding: 10px; /* Уменьшите отступы на более узких экранах */
-            }
         }
     </style>
 </head>
@@ -94,4 +89,3 @@
     </script>
 </body>
 </html>
-
