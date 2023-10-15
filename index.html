@@ -41,7 +41,7 @@
     
     <div>
         <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио">
-        <button onclick="playAudioFromURL()">Воспроизвести музыку интернет радио по URL</button>  <!-- Изменено название функции -->
+        <button onclick="playInternetRadio()">Воспроизвести музыку интернет радио по URL</button> <!-- Название функции не меняется -->
     </div>
 
     <!-- Добавляем область для перетаскивания файла -->
@@ -58,7 +58,7 @@
         const dropArea = document.getElementById('dropArea');
 
         // Измененная функция для воспроизведения музыки по URL с таймаутом
-        function playAudioFromURL() {
+        function playInternetRadio() {
             const audioURLValue = audioURL.value;
             const timeout = 10000; // 10 секунд
 
