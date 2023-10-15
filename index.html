@@ -83,6 +83,8 @@
             if (file) {
                 const objectURL = URL.createObjectURL(file);
                 audio.src = objectURL;
+                audioFile.files = event.dataTransfer.files; // Вызываем событие change для input
+                audioFile.dispatchEvent(new Event('change'));
             }
         }
 
@@ -107,4 +109,3 @@
     </script>
 </body>
 </html>
-
