@@ -44,7 +44,6 @@
     <div>
         <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио или M3U-плейлист">
         <button onclick="playInternetRadioWithRetries()">Воспроизвести музыку интернет радио по URL</button> <!-- Название функции не меняется -->
-        <a href="https://github.com/chtko/pleer.github.io" target="_blank">Информация</a>
     </div>
 
     <!-- Добавляем область для перетаскивания файла -->
@@ -115,7 +114,7 @@
 
         // Запрашиваем разрешение на уведомления
         if ('Notification' in window) {
-            Notification.requestPermission().then permission => {
+            Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
                     // Разрешение предоставлено
                 }
@@ -123,7 +122,7 @@
         }
 
         // Обработчик события выхода из браузера
-        window.addEventListener('beforeunload', function e => {
+        window.addEventListener('beforeunload', function (e) {
             // Проверяем, было ли предоставлено разрешение на уведомления
             if (Notification.permission === 'granted') {
                 // Отправляем уведомление
@@ -134,12 +133,12 @@
         });
 
         // Слушаем события клавиш
-        document.addEventListener('keydown', function e => {
+        document.addEventListener('keydown', function (e) {
             if (e.ctrlKey && e.key === 'v') {
                 // Проверяем, находится ли фокус на поле ввода URL интернет-радио
                 if (document.activeElement !== audioURL) {
                     // Получаем содержимое буфера обмена
-                    navigator.clipboard.readText().then clipText => {
+                    navigator.clipboard.readText().then(clipText => {
                         // Предполагаем, что буфер содержит URL аудио
                         audioURL.value = clipText;
                         audioURL.focus();
