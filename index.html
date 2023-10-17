@@ -31,10 +31,6 @@
         <source src="" type="audio/mpegurl"> <!-- Добавлено поддержку M3U -->
     </audio>
 
-    <audio id="silence" style="display: none;">
-        <source src="silence.mp3" type="audio/mpeg">
-    </audio>
-
     <script>
         const audio = document.getElementById('audio');
         audio.volume = 0.25; // Устанавливаем начальную громкость в 25%
@@ -73,8 +69,6 @@
 
         // Функция для попытки воспроизведения аудио
         function tryAudio() {
-            // Воспроизводим "тишину" на 5 секунд перед попытками подключения
-            playSilence();
             audio.src = audioURL.value;
             audio.play()
                 .then(() => {
@@ -89,17 +83,6 @@
                     }
                     // Здесь вы можете добавить обработку ошибок, например, вывод сообщения об ошибке
                 });
-        }
-
-        // Функция для воспроизведения "тишины" на 5 секунд
-        function playSilence() {
-            const silence = document.getElementById('silence');
-            silence.play().catch(error => {
-                // Обработка ошибки проигрывания тишины
-            });
-            setTimeout(() => {
-                silence.pause();
-            }, 5000);
         }
 
         audioFile.addEventListener('change', function(e) {
