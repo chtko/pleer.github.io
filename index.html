@@ -29,8 +29,8 @@
         <source src="" type="audio/mp4">
         <source src="" type="audio/x-m4a">
         <source src="" type="audio/mpegurl"> <!-- Добавлено поддержку M3U -->
-	<source src="" type="audio/flac"> <!-- FLAC -->
-	<source src="" type="audio/webm"> <!-- WebM -->
+		<source src="" type="audio/flac"> <!-- FLAC -->
+		<source src="" type="audio/webm"> <!-- WebM -->
     </audio>
 
     <script>
@@ -63,15 +63,23 @@
         const dropArea = document.getElementById('dropArea');
         let retryAttempts = 3; // Количество попыток воспроизведения
 
-        // Измененная функция для воспроизведения музыки по URL с попытками
+        // Функция для попытки воспроизведения аудио с поддержкой HTTPS и HTTP
         function playInternetRadioWithRetries() {
             retryAttempts = 3; // Сбрасываем число попыток при каждой попытке
-            tryAudio(); // Запускаем первую попытку
+            tryAudio(true); // Запускаем первую попытку с HTTPS
         }
 
         // Функция для попытки воспроизведения аудио
-        function tryAudio() {
-            audio.src = audioURL.value;
+        function tryAudio(useHTTPS) {
+            const url = audioURL.value;
+            if (useHTTPS) {
+                // Попробовать с HTTPS
+                audio.src = url;
+            } else {
+                // Попробовать с HTTP
+                audio.src = url.replace('https://', 'http://');
+            }
+
             audio.play()
                 .then(() => {
                     // Если воспроизведение успешно, не нужно больше попыток
@@ -81,7 +89,7 @@
                     if (retryAttempts > 0) {
                         retryAttempts--;
                         // Если есть еще попытки, пробуем снова через 3 секунды
-                        setTimeout(tryAudio, 3000);
+                        setTimeout(() => tryAudio(!useHTTPS), 3000);
                     }
                     // Здесь вы можете добавить обработку ошибок, например, вывод сообщения об ошибке
                 });
