@@ -1,20 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Музыкальный плеер</title>
     <style>
         body {
-            background-color: white; /* Белый фон */
+            background-color: #fff; /* Светлый фон по умолчанию */
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #313338; /* Темный фон при включенной темной теме в браузере */
+            }
         }
 
         /* Стили для области перетаскивания файла */
         #dropArea {
-            border: 2px dashed #fff;
-            padding: 20px;
+            border: 2px dashed #FFF;
+            padding: 10px; /* Уменьшенные отступы */
             text-align: center;
             width: 100%;
-            height: 100vh;
-            background-color: white; /* Белый фон по умолчанию */
+            height: 50vh; /* Уменьшенная высота */
+            background-color: #fff; /* Светлый фон по умолчанию */
+        }
+
+        @media (prefers-color-scheme: dark) {
+            #dropArea {
+                background-color: #313338; /* Темный фон при включенной темной теме в браузере */
+            }
+        }
+
+        /* Добавлен стиль для кнопок */
+        button {
+            background: conic-gradient(from 180deg at 2px calc(100% - 2px),#6a6b6c 90deg,transparent 0),
+                conic-gradient(from 0 at calc(100% - 2px) 2px,#6a6b6c 90deg,transparent 0),
+                linear-gradient(to top,#464747 2px,transparent 0px),
+                linear-gradient(to bottom,#5a5b5c 2px,transparent 0px),
+                linear-gradient(to left,#464747 2px,transparent 0px),
+                linear-gradient(to right,#5a5b5c 2px,transparent 0px);
+            background-color: #313233;
+            padding: calc(0.5em + 2px);
+            border-bottom: 3px solid black;
+            color: white; /* Цвет текста */
+            cursor: pointer;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            button {
+                background-color: #313233; /* Темный фон при включенной темной теме в браузере */
+                border-bottom: 3px #313233; /* Белая граница при включенной темной теме в браузере */
+            }
+        }
+
+        /* Добавлен стиль для активной области перетаскивания файла */
+        #dropArea.active {
+            background-color: lightblue;
         }
     </style>
 </head>
@@ -29,8 +70,8 @@
         <source src="" type="audio/mp4">
         <source src="" type="audio/x-m4a">
         <source src="" type="audio/mpegurl"> <!-- Добавлено поддержку M3U -->
-		<source src="" type="audio/flac"> <!-- FLAC -->
-		<source src="" type="audio/webm"> <!-- WebM -->
+        <source src="" type="audio/flac"> <!-- FLAC -->
+        <source src="" type="audio/webm"> <!-- WebM -->
     </audio>
 
     <script>
@@ -38,14 +79,16 @@
         audio.volume = 0.25; // Устанавливаем начальную громкость в 25%
     </script>
 
-    <div>
+    <div class="button-wrapper">
         <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a,.m3u,.flac,.webm" id="audioFile" style="display: none">
+        <!-- Применена стилизация для кнопки -->
         <button onclick="document.getElementById('audioFile').click()">Загрузить музыку</button>
     </div>
     
-    <div>
+    <div class="button-wrapper">
         <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио или M3U-плейлист">
-        <button onclick="playInternetRadioWithRetries()">Воспроизвести музыку интернет радио по URL</button> <!-- Название функции не меняется -->
+        <!-- Применена стилизация для кнопки -->
+        <button onclick="playInternetRadioWithRetries()">Воспроизвести музыку интернет радио по URL</button>
         <a href="https://github.com/chtko/pleer.github.io" target="_blank">Информация</a>
     </div>
 
@@ -105,7 +148,8 @@
 
         function dropHandler(event) {
             event.preventDefault();
-            dropArea.style.backgroundColor = 'white';
+            dropArea.classList.remove('active'); // Убираем стиль активной зоны при перетаскивании файла
+            dropArea.classList.add('dragged-over'); // Добавляем стиль после завершения перетаскивания
             const file = event.dataTransfer.files[0];
             if (file) {
                 const objectURL = URL.createObjectURL(file);
@@ -115,47 +159,25 @@
 
         function dragOverHandler(event) {
             event.preventDefault();
-            dropArea.style.backgroundColor = 'lightblue';
+            dropArea.classList.add('active'); // Добавляем стиль активной зоны при перетаскивании файла
         }
 
         function dragLeaveHandler(event) {
             event.preventDefault();
-            dropArea.style.backgroundColor = 'white';
+            dropArea.classList.remove('active'); // Убираем стиль активной зоны при перетаскивании файла
         }
 
-        // Запрашиваем разрешение на уведомления
-        if ('Notification' in window) {
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    // Разрешение предоставлено
-                }
-            });
-        }
-
-        // Обработчик события выхода из браузера
+        // Добавляем обработчик события перед выгрузкой страницы
         window.addEventListener('beforeunload', function (e) {
-            // Проверяем, было ли предоставлено разрешение на уведомления
-            if (Notification.permission === 'granted') {
-                // Отправляем уведомление
-                new Notification('Не забудьте выключить плеер', {
-                    body: 'Чтобы музыка не играла на фоне.'
-                });
-            }
-        });
+            // Отменяем стандартное действие перед выгрузкой страницы
+            e.preventDefault();
+            // Стандартное действие необходимо для срабатывания диалогового окна
+            e.returnValue = '';
 
-        // Слушаем события клавиш
-        document.addEventListener('keydown', function (e) {
-            if (e.ctrlKey && e.key === 'v') {
-                // Проверяем, находится ли фокус на поле ввода URL интернет-радио
-                if (document.activeElement !== audioURL) {
-                    // Получаем содержимое буфера обмена
-                    navigator.clipboard.readText().then(clipText => {
-                        // Предполагаем, что буфер содержит URL аудио
-                        audioURL.value = clipText;
-                        audioURL.focus();
-                    });
-                }
-            }
+            // Выводим диалоговое окно
+            const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
+            e.returnValue = confirmationMessage; // Стандарт для большинства браузеров
+            return confirmationMessage; // Стандарт для старых версий браузеров
         });
     </script>
 </body>
