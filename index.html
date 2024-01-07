@@ -35,12 +35,12 @@
         button {
             background: conic-gradient(from 180deg at 2px calc(100% - 2px),#6a6b6c 90deg,transparent 0),
                 conic-gradient(from 0 at calc(100% - 2px) 2px,#6a6b6c 90deg,transparent 0),
-                linear-gradient(to top,#464747 2px,transparent 0px),
-                linear-gradient(to bottom,#5a5b5c 2px,transparent 0px),
-                linear-gradient(to left,#464747 2px,transparent 0px),
-                linear-gradient(to right,#5a5b5c 2px,transparent 0px);
+                linear-gradient(to top,#464747 1px,transparent 0px),
+                linear-gradient(to bottom,#5a5b5c 1px,transparent 0px),
+                linear-gradient(to left,#464747 1px,transparent 0px),
+                linear-gradient(to right,#5a5b5c 1px,transparent 0px);
             background-color: #313233;
-            padding: calc(0.5em + 2px);
+            padding: calc(0.5em + 1px);
             border-bottom: 3px solid black;
             color: white; /* Цвет текста */
             cursor: pointer;
@@ -49,7 +49,7 @@
         @media (prefers-color-scheme: dark) {
             button {
                 background-color: #313233; /* Темный фон при включенной темной теме в браузере */
-                border-bottom: 3px #313233; /* Белая граница при включенной темной теме в браузере */
+                border-bottom: 1px #313233; /* Белая граница при включенной темной теме в браузере */
             }
         }
 
