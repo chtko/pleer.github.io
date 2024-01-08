@@ -1,55 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Музыкальный плеер</title>
     <style>
         body {
-            background-color: #fff; /* Светлый фон по умолчанию */
+            background-color: #fff;
+            /* Светлый фон по умолчанию */
         }
 
         @media (prefers-color-scheme: dark) {
             body {
-                background-color: #313338; /* Темный фон при включенной темной теме в браузере */
+                background-color: #313338;
+                /* Темный фон при включенной темной теме в браузере */
             }
         }
 
         /* Стили для области перетаскивания файла */
         #dropArea {
             border: 2px dashed #FFF;
-            padding: 10px; /* Уменьшенные отступы */
+            padding: 10px;
+            /* Уменьшенные отступы */
             text-align: center;
             width: 100%;
-            height: 50vh; /* Уменьшенная высота */
-            background-color: #fff; /* Светлый фон по умолчанию */
+            height: 50vh;
+            /* Уменьшенная высота */
+            background-color: #fff;
+            /* Светлый фон по умолчанию */
         }
 
         @media (prefers-color-scheme: dark) {
             #dropArea {
-                background-color: #313338; /* Темный фон при включенной темной теме в браузере */
+                background-color: #313338;
+                /* Темный фон при включенной темной теме в браузере */
             }
         }
 
         /* Добавлен стиль для кнопок */
         button {
-            background: conic-gradient(from 180deg at 2px calc(100% - 2px),#6a6b6c 90deg,transparent 0),
-                conic-gradient(from 0 at calc(100% - 2px) 2px,#6a6b6c 90deg,transparent 0),
-                linear-gradient(to top,#464747 1px,transparent 0px),
-                linear-gradient(to bottom,#5a5b5c 1px,transparent 0px),
-                linear-gradient(to left,#464747 1px,transparent 0px),
-                linear-gradient(to right,#5a5b5c 1px,transparent 0px);
+            background: conic-gradient(from 180deg at 2px calc(100% - 2px), #6a6b6c 90deg, transparent 0),
+                conic-gradient(from 0 at calc(100% - 2px) 2px, #6a6b6c 90deg, transparent 0),
+                linear-gradient(to top, #464747 1px, transparent 0px),
+                linear-gradient(to bottom, #5a5b5c 1px, transparent 0px),
+                linear-gradient(to left, #464747 1px, transparent 0px),
+                linear-gradient(to right, #5a5b5c 1px, transparent 0px);
             background-color: #313233;
             padding: calc(0.5em + 1px);
             border-bottom: 3px solid black;
-            color: white; /* Цвет текста */
+            color: white;
+            /* Цвет текста */
             cursor: pointer;
         }
 
         @media (prefers-color-scheme: dark) {
             button {
-                background-color: #313233; /* Темный фон при включенной темной теме в браузере */
-                border-bottom: 1px #313233; /* Белая граница при включенной темной теме в браузере */
+                background-color: #313233;
+                /* Темный фон при включенной темной теме в браузере */
+                border-bottom: 1px #313233;
+                /* Белая граница при включенной темной теме в браузере */
             }
         }
 
@@ -59,19 +69,24 @@
         }
     </style>
 </head>
+
 <body>
     <h1>Музыкальный плеер</h1>
-    
+
     <audio id="audio" controls>
-        <source src="" type="audio/mpeg"> <!-- Добавлено поддержку audio/mpeg -->
+        <source src="" type="audio/mpeg">
+        <!-- Добавлено поддержку audio/mpeg -->
         <source src="" type="audio/mp3">
         <source src="" type="audio/ogg">
         <source src="" type="audio/wav">
         <source src="" type="audio/mp4">
         <source src="" type="audio/x-m4a">
-        <source src="" type="audio/mpegurl"> <!-- Добавлено поддержку M3U -->
-        <source src="" type="audio/flac"> <!-- FLAC -->
-        <source src="" type="audio/webm"> <!-- WebM -->
+        <source src="" type="audio/mpegurl">
+        <!-- Добавлено поддержку M3U -->
+        <source src="" type="audio/flac">
+        <!-- FLAC -->
+        <source src="" type="audio/webm">
+        <!-- WebM -->
     </audio>
 
     <script>
@@ -84,7 +99,7 @@
         <!-- Применена стилизация для кнопки -->
         <button onclick="document.getElementById('audioFile').click()">Загрузить музыку</button>
     </div>
-    
+
     <div class="button-wrapper">
         <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио или M3U-плейлист">
         <!-- Применена стилизация для кнопки -->
@@ -93,13 +108,11 @@
     </div>
 
     <!-- Добавляем область для перетаскивания файла -->
-    <div id="dropArea" 
-        ondrop="dropHandler(event);" 
-        ondragover="dragOverHandler(event);"
+    <div id="dropArea" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);"
         ondragleave="dragLeaveHandler(event);">
         <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
     </div>
-    
+
     <script>
         const audioFile = document.getElementById('audioFile');
         const audioURL = document.getElementById('audioURL');
@@ -138,11 +151,12 @@
                 });
         }
 
-        audioFile.addEventListener('change', function(e) {
+        audioFile.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (file) {
                 const objectURL = URL.createObjectURL(file);
                 audio.src = objectURL;
+                setCookie('audioSrc', objectURL, 365); // Сохраняем в куки
             }
         });
 
@@ -154,6 +168,7 @@
             if (file) {
                 const objectURL = URL.createObjectURL(file);
                 audio.src = objectURL;
+                setCookie('audioSrc', objectURL, 365); // Сохраняем в куки
             }
         }
 
@@ -169,16 +184,19 @@
 
         // Добавляем обработчик события перед выгрузкой страницы
         window.addEventListener('beforeunload', function (e) {
-            // Отменяем стандартное действие перед выгрузкой страницы
-            e.preventDefault();
-            // Стандартное действие необходимо для срабатывания диалогового окна
-            e.returnValue = '';
-
             // Выводим диалоговое окно
             const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
             e.returnValue = confirmationMessage; // Стандарт для большинства браузеров
             return confirmationMessage; // Стандарт для старых версий браузеров
         });
+
+        // Функция для установки значения в куки
+        function setCookie(name, value, days) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+            document.cookie = name + '=' + value + ';expires=' + expires.toUTCString();
+        }
     </script>
 </body>
+
 </html>
