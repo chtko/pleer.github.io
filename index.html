@@ -2,7 +2,24 @@
 <html lang="en">
 
 <head>
-    
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const audio = document.getElementById('audio');
+        const lastPlayedTrack = getCookie('lastPlayedTrack');
+        if (lastPlayedTrack) {
+            audio.src = lastPlayedTrack;
+            audio.play();
+        }
+    });
+
+    window.addEventListener('beforeunload', function (e) {
+        const audio = document.getElementById('audio');
+        const lastPlayedTrack = audio.src;
+        setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
+    });
+</script>
+
     <script>
     // Обработчик события перед выгрузкой страницы
     window.addEventListener('beforeunload', function (e) {
@@ -227,6 +244,94 @@ document.addEventListener('DOMContentLoaded', function () {
             dropArea.classList.remove('active');
         }
     </script>
+
+<script>
+    const audio = document.getElementById('audio');
+    audio.volume = 0.25;
+
+    audio.addEventListener('ended', function () {
+        deleteCookie('lastPlayedTrack');
+    });
+
+    function playTrack(url) {
+        audio.src = url.replace('http://', 'https://');
+        audio.play();
+        setCookie('lastPlayedTrack', url, 1000);
+    }
+
+    // Функция для установки значения в куки
+    function setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+    }
+
+    // Функция для удаления куки
+    function deleteCookie(name) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+    }
+
+    // Функция для получения значения из куки
+    function getCookie(name) {
+        const nameEQ = `${name}=`;
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i];
+            while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
+            if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
+        }
+        return null;
+    }
+
+    function tryAudio(useHTTPS) {
+        const url = audioURL.value;
+        if (useHTTPS) {
+            audio.src = url;
+        } else {
+            audio.src = url.replace('https://', 'http://');
+        }
+
+        audio.play()
+            .then(() => {
+                retryAttempts = 0;
+            })
+            .catch(error => {
+                if (retryAttempts > 0) {
+                    retryAttempts--;
+                    setTimeout(() => tryAudio(!useHTTPS), 3000);
+                }
+            });
+    }
+
+    audioFile.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const objectURL = URL.createObjectURL(file);
+            playTrack(objectURL);
+        }
+    });
+
+    function dropHandler(event) {
+        event.preventDefault();
+        dropArea.classList.remove('active');
+        dropArea.classList.add('dragged-over');
+        const file = event.dataTransfer.files[0];
+        if (file) {
+            const objectURL = URL.createObjectURL(file);
+            audio.src = objectURL.replace('http://', 'https://');
+        }
+    }
+
+    function dragOverHandler(event) {
+        event.preventDefault();
+        dropArea.classList.add('active');
+    }
+
+    function dragLeaveHandler(event) {
+        event.preventDefault();
+        dropArea.classList.remove('active');
+    }
+</script>
 
 </body>
 
