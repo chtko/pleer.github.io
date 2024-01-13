@@ -109,7 +109,7 @@
     function playTrack(url) {
         audio.src = url.replace('http://', 'https://');
         audio.play();
-        setCookie('lastPlayedTrack', url, 1000); // Сохраняем информацию о последнем треке в куки
+        setCookie('lastPlayedTrack', url, 365); // Сохраняем информацию о последнем треке в куки
     }
 
     // Функция для установки значения в куки
