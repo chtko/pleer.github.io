@@ -18,10 +18,11 @@
             }
         }
 
-        /* Стили для области перетаскивания файла */
+        
+		/* Стили для области перетаскивания файла */
         #dropArea {
             border: 2px dashed #FFF;
-            padding: 10px;
+            padding: 2px;
             /* Уменьшенные отступы */
             text-align: center;
             width: 100%;
@@ -67,6 +68,7 @@
         #dropArea.active {
             background-color: lightblue;
         }
+		
     </style>
 </head>
 
@@ -92,6 +94,24 @@
     <script>
         const audio = document.getElementById('audio');
         audio.volume = 0.25; // Устанавливаем начальную громкость в 25%
+
+        const lastPlayedTrack = localStorage.getItem('lastPlayedTrack');
+        if (lastPlayedTrack) {
+            audio.src = lastPlayedTrack;
+            audio.play();
+        }
+
+        audio.addEventListener('ended', function () {
+            // Обработчик события завершения воспроизведения
+            localStorage.removeItem('lastPlayedTrack'); // Удаляем информацию о последнем треке после завершения воспроизведения
+        });
+
+        function playTrack(url) {
+            audio.src = url.replace('http://', 'https://');
+            audio.play();
+            localStorage.setItem('lastPlayedTrack', url); // Сохраняем информацию о текущем треке в localStorage
+        }
+
     </script>
 
     <div class="button-wrapper">
@@ -108,8 +128,7 @@
     </div>
 
     <!-- Добавляем область для перетаскивания файла -->
-    <div id="dropArea" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);"
-        ondragleave="dragLeaveHandler(event);">
+    <div id="dropArea" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
         <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
     </div>
 
@@ -117,37 +136,30 @@
         const audioFile = document.getElementById('audioFile');
         const audioURL = document.getElementById('audioURL');
         const dropArea = document.getElementById('dropArea');
-        let retryAttempts = 3; // Количество попыток воспроизведения
+        let retryAttempts = 3;
 
-        // Функция для попытки воспроизведения аудио с поддержкой HTTPS и HTTP
         function playInternetRadioWithRetries() {
-            retryAttempts = 3; // Сбрасываем число попыток при каждой попытке
-            tryAudio(true); // Запускаем первую попытку с HTTPS
+            retryAttempts = 3;
+            tryAudio(true);
         }
 
-        // Функция для попытки воспроизведения аудио
         function tryAudio(useHTTPS) {
             const url = audioURL.value;
             if (useHTTPS) {
-                // Попробовать с HTTPS
                 audio.src = url;
             } else {
-                // Попробовать с HTTP
                 audio.src = url.replace('https://', 'http://');
             }
 
             audio.play()
                 .then(() => {
-                    // Если воспроизведение успешно, не нужно больше попыток
                     retryAttempts = 0;
                 })
                 .catch(error => {
                     if (retryAttempts > 0) {
                         retryAttempts--;
-                        // Если есть еще попытки, пробуем снова через 3 секунды
                         setTimeout(() => tryAudio(!useHTTPS), 3000);
                     }
-                    // Здесь вы можете добавить обработку ошибок, например, вывод сообщения об ошибке
                 });
         }
 
@@ -155,48 +167,32 @@
             const file = e.target.files[0];
             if (file) {
                 const objectURL = URL.createObjectURL(file);
-                audio.src = objectURL;
-                setCookie('audioSrc', objectURL, 365); // Сохраняем в куки
+                playTrack(objectURL);
             }
         });
 
         function dropHandler(event) {
             event.preventDefault();
-            dropArea.classList.remove('active'); // Убираем стиль активной зоны при перетаскивании файла
-            dropArea.classList.add('dragged-over'); // Добавляем стиль после завершения перетаскивания
+            dropArea.classList.remove('active');
+            dropArea.classList.add('dragged-over');
             const file = event.dataTransfer.files[0];
             if (file) {
                 const objectURL = URL.createObjectURL(file);
-                audio.src = objectURL;
-                setCookie('audioSrc', objectURL, 365); // Сохраняем в куки
+                playTrack(objectURL);
             }
         }
 
         function dragOverHandler(event) {
             event.preventDefault();
-            dropArea.classList.add('active'); // Добавляем стиль активной зоны при перетаскивании файла
+            dropArea.classList.add('active');
         }
 
         function dragLeaveHandler(event) {
             event.preventDefault();
-            dropArea.classList.remove('active'); // Убираем стиль активной зоны при перетаскивании файла
-        }
-
-        // Добавляем обработчик события перед выгрузкой страницы
-        window.addEventListener('beforeunload', function (e) {
-            // Выводим диалоговое окно
-            const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
-            e.returnValue = confirmationMessage; // Стандарт для большинства браузеров
-            return confirmationMessage; // Стандарт для старых версий браузеров
-        });
-
-        // Функция для установки значения в куки
-        function setCookie(name, value, days) {
-            const expires = new Date();
-            expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-            document.cookie = name + '=' + value + ';expires=' + expires.toUTCString();
+            dropArea.classList.remove('active');
         }
     </script>
+
 </body>
 
 </html>
