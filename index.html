@@ -18,8 +18,7 @@
             }
         }
 
-        
-		/* Стили для области перетаскивания файла */
+        /* Стили для области перетаскивания файла */
         #dropArea {
             border: 2px dashed #FFF;
             padding: 2px;
@@ -68,7 +67,7 @@
         #dropArea.active {
             background-color: lightblue;
         }
-		
+
     </style>
 </head>
 
@@ -95,7 +94,7 @@
         const audio = document.getElementById('audio');
         audio.volume = 0.25; // Устанавливаем начальную громкость в 25%
 
-        const lastPlayedTrack = localStorage.getItem('lastPlayedTrack');
+        const lastPlayedTrack = getCookie('lastPlayedTrack');
         if (lastPlayedTrack) {
             audio.src = lastPlayedTrack;
             audio.play();
@@ -103,13 +102,37 @@
 
         audio.addEventListener('ended', function () {
             // Обработчик события завершения воспроизведения
-            localStorage.removeItem('lastPlayedTrack'); // Удаляем информацию о последнем треке после завершения воспроизведения
+            deleteCookie('lastPlayedTrack'); // Удаляем информацию о последнем треке после завершения воспроизведения
         });
 
         function playTrack(url) {
             audio.src = url.replace('http://', 'https://');
             audio.play();
-            localStorage.setItem('lastPlayedTrack', url); // Сохраняем информацию о текущем треке в localStorage
+            setCookie('lastPlayedTrack', url, 365); // Сохраняем информацию о последнем треке в куки
+        }
+
+        // Функция для установки значения в куки
+        function setCookie(name, value, days) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+            document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+        }
+
+        // Функция для удаления куки
+        function deleteCookie(name) {
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+        }
+
+        // Функция для получения значения из куки
+        function getCookie(name) {
+            const nameEQ = `${name}=`;
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i];
+                while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
+                if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
+            }
+            return null;
         }
 
     </script>
