@@ -8,38 +8,29 @@
     <style>
         body {
             background-color: #fff;
-            /* Светлый фон по умолчанию */
         }
 
         @media (prefers-color-scheme: dark) {
             body {
                 background-color: #313338;
-                /* Темный фон при включенной темной теме в браузере */
             }
         }
 
-        
-		/* Стили для области перетаскивания файла */
         #dropArea {
             border: 2px dashed #FFF;
             padding: 2px;
-            /* Уменьшенные отступы */
             text-align: center;
             width: 100%;
             height: 50vh;
-            /* Уменьшенная высота */
             background-color: #fff;
-            /* Светлый фон по умолчанию */
         }
 
         @media (prefers-color-scheme: dark) {
             #dropArea {
                 background-color: #313338;
-                /* Темный фон при включенной темной теме в браузере */
             }
         }
 
-        /* Добавлен стиль для кнопок */
         button {
             background: conic-gradient(from 180deg at 2px calc(100% - 2px), #6a6b6c 90deg, transparent 0),
                 conic-gradient(from 0 at calc(100% - 2px) 2px, #6a6b6c 90deg, transparent 0),
@@ -51,24 +42,20 @@
             padding: calc(0.5em + 1px);
             border-bottom: 3px solid black;
             color: white;
-            /* Цвет текста */
             cursor: pointer;
         }
 
         @media (prefers-color-scheme: dark) {
             button {
                 background-color: #313233;
-                /* Темный фон при включенной темной теме в браузере */
                 border-bottom: 1px #313233;
-                /* Белая граница при включенной темной теме в браузере */
             }
         }
 
-        /* Добавлен стиль для активной области перетаскивания файла */
         #dropArea.active {
             background-color: lightblue;
         }
-		
+
     </style>
 </head>
 
@@ -77,91 +64,74 @@
 
     <audio id="audio" controls>
         <source src="" type="audio/mpeg">
-        <!-- Добавлено поддержку audio/mpeg -->
         <source src="" type="audio/mp3">
         <source src="" type="audio/ogg">
         <source src="" type="audio/wav">
         <source src="" type="audio/mp4">
         <source src="" type="audio/x-m4a">
         <source src="" type="audio/mpegurl">
-        <!-- Добавлено поддержку M3U -->
         <source src="" type="audio/flac">
-        <!-- FLAC -->
         <source src="" type="audio/webm">
-        <!-- WebM -->
     </audio>
 
     <script>
-    const audio = document.getElementById('audio');
-    audio.volume = 0.25; // Устанавливаем начальную громкость в 25%
+        const audio = document.getElementById('audio');
+        audio.volume = 0.25;
 
-    const lastPlayedTrack = getCookie('lastPlayedTrack');
-    if (lastPlayedTrack) {
-        audio.src = lastPlayedTrack;
-        audio.play();
-    }
+        const lastPlayedTrack = getCookie('lastPlayedTrack');
+        if (lastPlayedTrack) {
+            audio.src = lastPlayedTrack;
+            audio.play();
+        }
 
-    audio.addEventListener('ended', function () {
-        // Обработчик события завершения воспроизведения
-        deleteCookie('lastPlayedTrack'); // Удаляем информацию о последнем треке после завершения воспроизведения
-    });
+        audio.addEventListener('ended', function () {
+            deleteCookie('lastPlayedTrack');
+        });
 
-    // Функция для установки значения в куки
-function setCookie(name, value, days) {
-    const expires = new Date();
-    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-}
+        function playTrack(url) {
+            audio.src = url.replace('http://', 'https://');
+            audio.play();
+            setCookie('lastPlayedTrack', url, 1000);
+        }
 
-// Функция для удаления куки
-function deleteCookie(name) {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
-}
+        function setCookie(name, value, days) {
+            const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+            document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+        }
 
-// Функция для получения значения из куки
-function getCookie(name) {
-    const nameEQ = `${name}=`;
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-        let cookie = cookies[i];
-        while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
-        if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
-    }
-    return null;
-}
+        function deleteCookie(name) {
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+        }
 
-</script>
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    </script>
 
-<!-- Добавляем обработчик события перед выгрузкой страницы -->
-<script>
-    window.addEventListener('beforeunload', function (e) {
-        // Отменяем стандартное действие перед выгрузкой страницы
-        e.preventDefault();
-        // Стандартное действие необходимо для срабатывания диалогового окна
-        e.returnValue = '';
+    <script>
+        window.addEventListener('beforeunload', function (e) {
+            e.preventDefault();
+            e.returnValue = '';
 
-        // Выводим диалоговое окно
-        const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
-        e.returnValue = confirmationMessage; // Стандарт для большинства браузеров
-        return confirmationMessage; // Стандарт для старых версий браузеров
-    });
-
+            const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
+            e.returnValue = confirmationMessage;
+            return confirmationMessage;
+        });
     </script>
 
     <div class="button-wrapper">
         <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a,.m3u,.flac,.webm" id="audioFile" style="display: none">
-        <!-- Применена стилизация для кнопки -->
         <button onclick="document.getElementById('audioFile').click()">Загрузить музыку</button>
     </div>
 
     <div class="button-wrapper">
         <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио или M3U-плейлист">
-        <!-- Применена стилизация для кнопки -->
         <button onclick="playInternetRadioWithRetries()">Воспроизвести музыку интернет радио по URL</button>
         <a href="https://github.com/chtko/pleer.github.io" target="_blank">Информация</a>
     </div>
 
-    <!-- Добавляем область для перетаскивания файла -->
     <div id="dropArea" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
         <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
     </div>
@@ -206,17 +176,13 @@ function getCookie(name) {
         });
 
         function dropHandler(event) {
-    event.preventDefault();
-    dropArea.classList.remove('active');
-    dropArea.classList.add('dragged-over');
-    const file = event.dataTransfer.files[0];
-    if (file) {
-        const objectURL = URL.createObjectURL(file);
-        // playTrack(objectURL);
-        // Закомментируйте строку выше, чтобы предотвратить автоматическое воспроизведение
-        // и установите только URL в аудио-элемент
-        audio.src = objectURL.replace('http://', 'https://');
-        // Не вызывайте audio.play() здесь
+            event.preventDefault();
+            dropArea.classList.remove('active');
+            dropArea.classList.add('dragged-over');
+            const file = event.dataTransfer.files[0];
+            if (file) {
+                const objectURL = URL.createObjectURL(file);
+                audio.src = objectURL.replace('http://', 'https://');
             }
         }
 
