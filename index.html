@@ -2,6 +2,16 @@
 <html lang="en">
 
 <head>
+    
+    <script>
+    // Обработчик события перед выгрузкой страницы
+    window.addEventListener('beforeunload', function (e) {
+        const audio = document.getElementById('audio');
+        const lastPlayedTrack = audio.src;
+        setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
+    });
+</script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Музыкальный плеер</title>
