@@ -106,35 +106,30 @@
         deleteCookie('lastPlayedTrack'); // Удаляем информацию о последнем треке после завершения воспроизведения
     });
 
-    function playTrack(url) {
-        audio.src = url.replace('http://', 'https://');
-        audio.play();
-        setCookie('lastPlayedTrack', url, 365); // Сохраняем информацию о последнем треке в куки
-    }
-
     // Функция для установки значения в куки
-    function setCookie(name, value, days) {
-        const expires = new Date();
-        expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-    }
+function setCookie(name, value, days) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+}
 
-    // Функция для удаления куки
-    function deleteCookie(name) {
-        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
-    }
+// Функция для удаления куки
+function deleteCookie(name) {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+}
 
-    // Функция для получения значения из куки
-    function getCookie(name) {
-        const nameEQ = `${name}=`;
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            let cookie = cookies[i];
-            while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
-            if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
-        }
-        return null;
+// Функция для получения значения из куки
+function getCookie(name) {
+    const nameEQ = `${name}=`;
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
+        if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
     }
+    return null;
+}
+
 </script>
 
 <!-- Добавляем обработчик события перед выгрузкой страницы -->
