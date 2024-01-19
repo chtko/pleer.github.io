@@ -2,32 +2,62 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Музыкальный плеер</title>
     <style>
-        /* Ваши стили остаются без изменений */
+        body {
+            background-color: #fff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #313338;
+            }
+        }
+
+        #dropArea {
+            border: 2px dashed #FFF;
+            padding: 2px;
+            text-align: center;
+            width: 100%;
+            height: 50vh;
+            background-color: #fff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            #dropArea {
+                background-color: #313338;
+            }
+        }
+
+        button {
+            background: conic-gradient(from 180deg at 2px calc(100% - 2px), #6a6b6c 90deg, transparent 0),
+                conic-gradient(from 0 at calc(100% - 2px) 2px, #6a6b6c 90deg, transparent 0),
+                linear-gradient(to top, #464747 1px, transparent 0px),
+                linear-gradient(to bottom, #5a5b5c 1px, transparent 0px),
+                linear-gradient(to left, #464747 1px, transparent 0px),
+                linear-gradient(to right, #5a5b5c 1px, transparent 0px);
+            background-color: #313233;
+            padding: calc(0.5em + 1px);
+            border-bottom: 3px solid black;
+            color: white;
+            cursor: pointer;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            button {
+                background-color: #313233;
+                border-bottom: 1px #313233;
+            }
+        }
+
+        #dropArea.active {
+            background-color: lightblue;
+        }
+
     </style>
-</head>
-
-<body>
-    <h1>Музыкальный плеер</h1>
-
-    <audio id="audio" controls>
-        <source src="" type="audio/mpeg">
-        <!-- Добавлено поддержку audio/mpeg -->
-        <source src="" type="audio/mp3">
-        <source src="" type="audio/ogg">
-        <source src="" type="audio/wav">
-        <source src="" type="audio/mp4">
-        <source src="" type="audio/x-m4a">
-        <source src="" type="audio/mpegurl">
-        <!-- Добавлено поддержку M3U -->
-        <source src="" type="audio/flac">
-        <!-- FLAC -->
-        <source src="" type="audio/webm">
-        <!-- WebM -->
-    </audio>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -35,11 +65,11 @@
             const lastPlayedTrack = localStorage.getItem('lastPlayedTrack');
             if (lastPlayedTrack) {
                 audio.src = lastPlayedTrack;
-                audio.play().catch(error => console.error('Error playing audio:', error));
+                audio.play();
             }
         });
 
-        window.addEventListener('beforeunload', function () {
+        window.addEventListener('beforeunload', function (e) {
             const audio = document.getElementById('audio');
             const lastPlayedTrack = audio.src;
             localStorage.setItem('lastPlayedTrack', lastPlayedTrack);
@@ -54,43 +84,27 @@
 
         function playTrack(url) {
             audio.src = url.replace('http://', 'https://');
-            audio.play().catch(error => console.error('Error playing audio:', error));
+            audio.play();
             localStorage.setItem('lastPlayedTrack', url);
         }
     </script>
 
-    <script>
-    window.addEventListener('beforeunload', function (e) {
-        // Отменяем стандартное действие перед выгрузкой страницы
-        e.preventDefault();
-        // Стандартное действие необходимо для срабатывания диалогового окна
-        e.returnValue = '';
+</head>
 
-        // Выводим диалоговое окно
-        const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
-        e.returnValue = confirmationMessage; // Стандарт для большинства браузеров
-        return confirmationMessage; // Стандарт для старых версий браузеров
-    });
+<body>
+    <h1>Музыкальный плеер</h1>
 
-    </script>
-
-    <div class="button-wrapper">
-        <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a,.m3u,.flac,.webm" id="audioFile" style="display: none">
-        <!-- Применена стилизация для кнопки -->
-        <button onclick="document.getElementById('audioFile').click()">Загрузить музыку</button>
-    </div>
-
-    <div class="button-wrapper">
-        <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио или M3U-плейлист">
-        <!-- Применена стилизация для кнопки -->
-        <button onclick="playInternetRadioWithRetries()">Воспроизвести музыку интернет радио по URL</button>
-        <a href="https://github.com/chtko/pleer.github.io" target="_blank">Информация</a>
-    </div>
-
-    <!-- Добавляем область для перетаскивания файла -->
-    <div id="dropArea" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
-        <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
-    </div>
+    <audio id="audio" controls>
+        <source src="" type="audio/mpeg">
+        <source src="" type="audio/mp3">
+        <source src="" type="audio/ogg">
+        <source src="" type="audio/wav">
+        <source src="" type="audio/mp4">
+        <source src="" type="audio/x-m4a">
+        <source src="" type="audio/mpegurl">
+        <source src="" type="audio/flac">
+        <source src="" type="audio/webm">
+    </audio>
 
     <script>
         const audioFile = document.getElementById('audioFile');
@@ -132,17 +146,13 @@
         });
 
         function dropHandler(event) {
-    event.preventDefault();
-    dropArea.classList.remove('active');
-    dropArea.classList.add('dragged-over');
-    const file = event.dataTransfer.files[0];
-    if (file) {
-        const objectURL = URL.createObjectURL(file);
-        // playTrack(objectURL);
-        // Закомментируйте строку выше, чтобы предотвратить автоматическое воспроизведение
-        // и установите только URL в аудио-элемент
-        audio.src = objectURL.replace('http://', 'https://');
-        // Не вызывайте audio.play() здесь
+            event.preventDefault();
+            dropArea.classList.remove('active');
+            dropArea.classList.add('dragged-over');
+            const file = event.dataTransfer.files[0];
+            if (file) {
+                const objectURL = URL.createObjectURL(file);
+                audio.src = objectURL.replace('http://', 'https://');
             }
         }
 
@@ -157,112 +167,32 @@
         }
     </script>
 
-</body>
-
-</html>
-
-
     <script>
-    window.addEventListener('beforeunload', function (e) {
-        // Отменяем стандартное действие перед выгрузкой страницы
-        e.preventDefault();
-        // Стандартное действие необходимо для срабатывания диалогового окна
-        e.returnValue = '';
+        window.addEventListener('beforeunload', function (e) {
+            e.preventDefault();
+            e.returnValue = '';
 
-        // Выводим диалоговое окно
-        const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
-        e.returnValue = confirmationMessage; // Стандарт для большинства браузеров
-        return confirmationMessage; // Стандарт для старых версий браузеров
-    });
-
+            const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
+            e.returnValue = confirmationMessage;
+            return confirmationMessage;
+        });
     </script>
 
     <div class="button-wrapper">
         <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a,.m3u,.flac,.webm" id="audioFile" style="display: none">
-        <!-- Применена стилизация для кнопки -->
         <button onclick="document.getElementById('audioFile').click()">Загрузить музыку</button>
     </div>
 
     <div class="button-wrapper">
         <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио или M3U-плейлист">
-        <!-- Применена стилизация для кнопки -->
         <button onclick="playInternetRadioWithRetries()">Воспроизвести музыку интернет радио по URL</button>
         <a href="https://github.com/chtko/pleer.github.io" target="_blank">Информация</a>
     </div>
 
-    <!-- Добавляем область для перетаскивания файла -->
     <div id="dropArea" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
         <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
     </div>
 
-    <script>
-        const audioFile = document.getElementById('audioFile');
-        const audioURL = document.getElementById('audioURL');
-        const dropArea = document.getElementById('dropArea');
-        let retryAttempts = 3;
-
-        function playInternetRadioWithRetries() {
-            retryAttempts = 3;
-            tryAudio(true);
-        }
-
-        function tryAudio(useHTTPS) {
-            const url = audioURL.value;
-            if (useHTTPS) {
-                audio.src = url;
-            } else {
-                audio.src = url.replace('https://', 'http://');
-            }
-
-            audio.play()
-                .then(() => {
-                    retryAttempts = 0;
-                })
-                .catch(error => {
-                    if (retryAttempts > 0) {
-                        retryAttempts--;
-                        setTimeout(() => tryAudio(!useHTTPS), 3000);
-                    }
-                });
-        }
-
-        audioFile.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const objectURL = URL.createObjectURL(file);
-                playTrack(objectURL);
-            }
-        });
-
-        function dropHandler(event) {
-    event.preventDefault();
-    dropArea.classList.remove('active');
-    dropArea.classList.add('dragged-over');
-    const file = event.dataTransfer.files[0];
-    if (file) {
-        const objectURL = URL.createObjectURL(file);
-        // playTrack(objectURL);
-        // Закомментируйте строку выше, чтобы предотвратить автоматическое воспроизведение
-        // и установите только URL в аудио-элемент
-        audio.src = objectURL.replace('http://', 'https://');
-        // Не вызывайте audio.play() здесь
-            }
-        }
-
-        function dragOverHandler(event) {
-            event.preventDefault();
-            dropArea.classList.add('active');
-        }
-
-        function dragLeaveHandler(event) {
-            event.preventDefault();
-            dropArea.classList.remove('active');
-        }
-    </script>
-
-</body>
-
-</html>
 </body>
 
 </html>
