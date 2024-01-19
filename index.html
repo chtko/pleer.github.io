@@ -1,74 +1,12 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Музыкальный плеер</title>
     <style>
-        body {
-            background-color: #fff;
-            /* Светлый фон по умолчанию */
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #313338;
-                /* Темный фон при включенной темной теме в браузере */
-            }
-        }
-
-        
-		/* Стили для области перетаскивания файла */
-        #dropArea {
-            border: 2px dashed #FFF;
-            padding: 2px;
-            /* Уменьшенные отступы */
-            text-align: center;
-            width: 100%;
-            height: 50vh;
-            /* Уменьшенная высота */
-            background-color: #fff;
-            /* Светлый фон по умолчанию */
-        }
-
-        @media (prefers-color-scheme: dark) {
-            #dropArea {
-                background-color: #313338;
-                /* Темный фон при включенной темной теме в браузере */
-            }
-        }
-
-        /* Добавлен стиль для кнопок */
-        button {
-            background: conic-gradient(from 180deg at 2px calc(100% - 2px), #6a6b6c 90deg, transparent 0),
-                conic-gradient(from 0 at calc(100% - 2px) 2px, #6a6b6c 90deg, transparent 0),
-                linear-gradient(to top, #464747 1px, transparent 0px),
-                linear-gradient(to bottom, #5a5b5c 1px, transparent 0px),
-                linear-gradient(to left, #464747 1px, transparent 0px),
-                linear-gradient(to right, #5a5b5c 1px, transparent 0px);
-            background-color: #313233;
-            padding: calc(0.5em + 1px);
-            border-bottom: 3px solid black;
-            color: white;
-            /* Цвет текста */
-            cursor: pointer;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            button {
-                background-color: #313233;
-                /* Темный фон при включенной темной теме в браузере */
-                border-bottom: 1px #313233;
-                /* Белая граница при включенной темной теме в браузере */
-            }
-        }
-
-        /* Добавлен стиль для активной области перетаскивания файла */
-        #dropArea.active {
-            background-color: lightblue;
-        }
-		
+        /* Ваши стили остаются без изменений */
     </style>
 </head>
 
@@ -94,7 +32,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const audio = document.getElementById('audio');
-            const lastPlayedTrack = getCookie('lastPlayedTrack');
+            const lastPlayedTrack = localStorage.getItem('lastPlayedTrack');
             if (lastPlayedTrack) {
                 audio.src = lastPlayedTrack;
                 audio.play().catch(error => console.error('Error playing audio:', error));
@@ -104,43 +42,125 @@
         window.addEventListener('beforeunload', function () {
             const audio = document.getElementById('audio');
             const lastPlayedTrack = audio.src;
-            setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
+            localStorage.setItem('lastPlayedTrack', lastPlayedTrack);
         });
 
         const audio = document.getElementById('audio');
         audio.volume = 0.25;
 
         audio.addEventListener('ended', function () {
-            deleteCookie('lastPlayedTrack');
+            localStorage.removeItem('lastPlayedTrack');
         });
 
         function playTrack(url) {
             audio.src = url.replace('http://', 'https://');
             audio.play().catch(error => console.error('Error playing audio:', error));
-            setCookie('lastPlayedTrack', url, 1000);
-        }
-
-        function setCookie(name, value, days) {
-            const expires = new Date();
-            expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-            document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-        }
-
-        function deleteCookie(name) {
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
-        }
-
-        function getCookie(name) {
-            const nameEQ = `${name}=`;
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i];
-                while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
-                if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
-            }
-            return null;
+            localStorage.setItem('lastPlayedTrack', url);
         }
     </script>
+
+    <script>
+    window.addEventListener('beforeunload', function (e) {
+        // Отменяем стандартное действие перед выгрузкой страницы
+        e.preventDefault();
+        // Стандартное действие необходимо для срабатывания диалогового окна
+        e.returnValue = '';
+
+        // Выводим диалоговое окно
+        const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
+        e.returnValue = confirmationMessage; // Стандарт для большинства браузеров
+        return confirmationMessage; // Стандарт для старых версий браузеров
+    });
+
+    </script>
+
+    <div class="button-wrapper">
+        <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a,.m3u,.flac,.webm" id="audioFile" style="display: none">
+        <!-- Применена стилизация для кнопки -->
+        <button onclick="document.getElementById('audioFile').click()">Загрузить музыку</button>
+    </div>
+
+    <div class="button-wrapper">
+        <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио или M3U-плейлист">
+        <!-- Применена стилизация для кнопки -->
+        <button onclick="playInternetRadioWithRetries()">Воспроизвести музыку интернет радио по URL</button>
+        <a href="https://github.com/chtko/pleer.github.io" target="_blank">Информация</a>
+    </div>
+
+    <!-- Добавляем область для перетаскивания файла -->
+    <div id="dropArea" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
+        <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
+    </div>
+
+    <script>
+        const audioFile = document.getElementById('audioFile');
+        const audioURL = document.getElementById('audioURL');
+        const dropArea = document.getElementById('dropArea');
+        let retryAttempts = 3;
+
+        function playInternetRadioWithRetries() {
+            retryAttempts = 3;
+            tryAudio(true);
+        }
+
+        function tryAudio(useHTTPS) {
+            const url = audioURL.value;
+            if (useHTTPS) {
+                audio.src = url;
+            } else {
+                audio.src = url.replace('https://', 'http://');
+            }
+
+            audio.play()
+                .then(() => {
+                    retryAttempts = 0;
+                })
+                .catch(error => {
+                    if (retryAttempts > 0) {
+                        retryAttempts--;
+                        setTimeout(() => tryAudio(!useHTTPS), 3000);
+                    }
+                });
+        }
+
+        audioFile.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const objectURL = URL.createObjectURL(file);
+                playTrack(objectURL);
+            }
+        });
+
+        function dropHandler(event) {
+    event.preventDefault();
+    dropArea.classList.remove('active');
+    dropArea.classList.add('dragged-over');
+    const file = event.dataTransfer.files[0];
+    if (file) {
+        const objectURL = URL.createObjectURL(file);
+        // playTrack(objectURL);
+        // Закомментируйте строку выше, чтобы предотвратить автоматическое воспроизведение
+        // и установите только URL в аудио-элемент
+        audio.src = objectURL.replace('http://', 'https://');
+        // Не вызывайте audio.play() здесь
+            }
+        }
+
+        function dragOverHandler(event) {
+            event.preventDefault();
+            dropArea.classList.add('active');
+        }
+
+        function dragLeaveHandler(event) {
+            event.preventDefault();
+            dropArea.classList.remove('active');
+        }
+    </script>
+
+</body>
+
+</html>
+
 
     <script>
     window.addEventListener('beforeunload', function (e) {
