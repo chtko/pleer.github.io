@@ -2,35 +2,42 @@
 <html lang="en">
 
 <head>
-
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const audio = document.getElementById('audio');
-        const lastPlayedTrack = getCookie('lastPlayedTrack');
-        if (lastPlayedTrack) {
-            const [trackSrc, trackType] = lastPlayedTrack.split('|');
-            audio.src = trackSrc;
-            audio.type = trackType;
-            audio.play();
+        document.addEventListener('DOMContentLoaded', function () {
+            const audio = document.getElementById('audio');
+            const lastPlayedTrack = getCookie('lastPlayedTrack');
+            if (lastPlayedTrack) {
+                const [trackSrc, trackType] = lastPlayedTrack.split('|');
+                audio.src = trackSrc;
+                audio.type = trackType;
+                audio.play();
+            }
+        });
+
+        window.addEventListener('beforeunload', function () {
+            const audio = document.getElementById('audio');
+            const lastPlayedTrack = `${audio.src}|${audio.type}`;
+            setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
+        });
+
+        function setCookie(name, value, days) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+            document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
         }
-    });
 
-    window.addEventListener('beforeunload', function (e) {
-        const audio = document.getElementById('audio');
-        const lastPlayedTrack = `${audio.src}|${audio.type}`;
-        setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
-    });
-</script>
+        function getCookie(name) {
+            const nameEQ = `${name}=`;
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i];
+                while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
+                if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
+            }
+            return null;
+        }
+    </script>
 
-    <script>
-    // Обработчик события перед выгрузкой страницы
-    window.addEventListener('beforeunload', function (e) {
-        const audio = document.getElementById('audio');
-        const lastPlayedTrack = `${audio.src}|${audio.type}`;
-        setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
-    });
-</script>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Музыкальный плеер</title>
@@ -127,32 +134,12 @@
             setCookie('lastPlayedTrack', `${url}|${type}`, 1000);
         }
 
-       // Функция для установки значения в куки
-document.addEventListener('DOMContentLoaded', function () {
-            const audio = document.getElementById('audio');
-            const lastPlayedTrack = getCookie('lastPlayedTrack');
-            if (lastPlayedTrack) {
-                const [trackSrc, trackType] = lastPlayedTrack.split('|');
-                audio.src = trackSrc;
-                audio.type = trackType;
-                audio.play();
-            }
-        });
-
-        window.addEventListener('beforeunload', function () {
-            const audio = document.getElementById('audio');
-            const lastPlayedTrack = `${audio.src}|${audio.type}`;
-            setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
-        });
-
-        // Функция для установки значения в куки
         function setCookie(name, value, days) {
             const expires = new Date();
             expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
             document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
         }
 
-        // Функция для получения значения из куки
         function getCookie(name) {
             const nameEQ = `${name}=`;
             const cookies = document.cookie.split(';');
@@ -163,20 +150,19 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             return null;
         }
-		
     </script>
 
-    <script>
-        window.addEventListener('beforeunload', function (e) {
-            e.preventDefault();
-            e.returnValue = '';
+ <script>
+         window.addEventListener('beforeunload', function (e) {
+             e.preventDefault();
+             e.returnValue = '';
 
-            const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
-            e.returnValue = confirmationMessage;
-            return confirmationMessage;
+             const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
+             e.returnValue = confirmationMessage;
+             return confirmationMessage;
         });
-    </script>
-
+     </script>
+	
     <div class="button-wrapper">
         <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a,.m3u,.flac,.webm" id="audioFile" style="display: none">
         <button onclick="document.getElementById('audioFile').click()">Загрузить музыку</button>
@@ -252,95 +238,6 @@ document.addEventListener('DOMContentLoaded', function () {
             dropArea.classList.remove('active');
         }
     </script>
-
-<script>
-    const audio = document.getElementById('audio');
-    audio.volume = 0.25;
-
-    audio.addEventListener('ended', function () {
-        deleteCookie('lastPlayedTrack');
-    });
-
-    function playTrack(url, type) {
-        audio.src = url.replace('http://', 'https://');
-        audio.type = type;
-        audio.play();
-        setCookie('lastPlayedTrack', `${url}|${type}`, 1000);
-    }
-
-    // Функция для установки значения в куки
-    function setCookie(name, value, days) {
-        const expires = new Date();
-        expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-    }
-
-    // Функция для удаления куки
-    function deleteCookie(name) {
-        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
-    }
-
-    // Функция для получения значения из куки
-    function getCookie(name) {
-        const nameEQ = `${name}=`;
-        const cookies = document.cookie.split(';');
-        for (let i = 0; cookies && i < cookies.length; i++) {
-            let cookie = cookies[i];
-            while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
-            if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
-        }
-        return null;
-    }
-
-    function tryAudio(useHTTPS) {
-        const url = audioURL.value;
-        if (useHTTPS) {
-            audio.src = url;
-        } else {
-            audio.src = url.replace('https://', 'http://');
-        }
-
-        audio.play()
-            .then(() => {
-                retryAttempts = 0;
-            })
-            .catch(error => {
-                if (retryAttempts > 0) {
-                    retryAttempts--;
-                    setTimeout(() => tryAudio(!useHTTPS), 3000);
-                }
-            });
-    }
-
-    audioFile.addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (file) {
-            const objectURL = URL.createObjectURL(file);
-            playTrack(objectURL, file.type);
-        }
-    });
-
-    function dropHandler(event) {
-        event.preventDefault();
-        dropArea.classList.remove('active');
-        dropArea.classList.add('dragged-over');
-        const file = event.dataTransfer.files[0];
-        if (file) {
-            const objectURL = URL.createObjectURL(file);
-            playTrack(objectURL, file.type);
-        }
-    }
-
-    function dragOverHandler(event) {
-        event.preventDefault();
-        dropArea.classList.add('active');
-    }
-
-    function dragLeaveHandler(event) {
-        event.preventDefault();
-        dropArea.classList.remove('active');
-    }
-</script>
 
 </body>
 
