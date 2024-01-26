@@ -8,14 +8,16 @@
         const audio = document.getElementById('audio');
         const lastPlayedTrack = getCookie('lastPlayedTrack');
         if (lastPlayedTrack) {
-            audio.src = lastPlayedTrack;
+            const [trackSrc, trackType] = lastPlayedTrack.split('|');
+            audio.src = trackSrc;
+            audio.type = trackType;
             audio.play();
         }
     });
 
     window.addEventListener('beforeunload', function (e) {
         const audio = document.getElementById('audio');
-        const lastPlayedTrack = audio.src;
+        const lastPlayedTrack = `${audio.src}|${audio.type}`;
         setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
     });
 </script>
@@ -24,7 +26,7 @@
     // Обработчик события перед выгрузкой страницы
     window.addEventListener('beforeunload', function (e) {
         const audio = document.getElementById('audio');
-        const lastPlayedTrack = audio.src;
+        const lastPlayedTrack = `${audio.src}|${audio.type}`;
         setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
     });
 </script>
@@ -33,7 +35,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Музыкальный плеер</title>
     <style>
-        body {
+        /* Ваши стили остаются неизменными */
+		 body {
             background-color: #fff;
         }
 
@@ -82,7 +85,7 @@
         #dropArea.active {
             background-color: lightblue;
         }
-
+		
     </style>
 </head>
 
@@ -107,7 +110,9 @@
 
         const lastPlayedTrack = getCookie('lastPlayedTrack');
         if (lastPlayedTrack) {
-            audio.src = lastPlayedTrack;
+            const [trackSrc, trackType] = lastPlayedTrack.split('|');
+            audio.src = trackSrc;
+            audio.type = trackType;
             audio.play();
         }
 
@@ -115,10 +120,11 @@
             deleteCookie('lastPlayedTrack');
         });
 
-        function playTrack(url) {
+        function playTrack(url, type) {
             audio.src = url.replace('http://', 'https://');
+            audio.type = type;
             audio.play();
-            setCookie('lastPlayedTrack', url, 1000);
+            setCookie('lastPlayedTrack', `${url}|${type}`, 1000);
         }
 
        // Функция для установки значения в куки
@@ -126,14 +132,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const audio = document.getElementById('audio');
             const lastPlayedTrack = getCookie('lastPlayedTrack');
             if (lastPlayedTrack) {
-                audio.src = lastPlayedTrack;
+                const [trackSrc, trackType] = lastPlayedTrack.split('|');
+                audio.src = trackSrc;
+                audio.type = trackType;
                 audio.play();
             }
         });
 
         window.addEventListener('beforeunload', function () {
             const audio = document.getElementById('audio');
-            const lastPlayedTrack = audio.src;
+            const lastPlayedTrack = `${audio.src}|${audio.type}`;
             setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
         });
 
@@ -219,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const file = e.target.files[0];
             if (file) {
                 const objectURL = URL.createObjectURL(file);
-                playTrack(objectURL);
+                playTrack(objectURL, file.type);
             }
         });
 
@@ -230,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const file = event.dataTransfer.files[0];
             if (file) {
                 const objectURL = URL.createObjectURL(file);
-                audio.src = objectURL.replace('http://', 'https://');
+                playTrack(objectURL, file.type);
             }
         }
 
@@ -253,10 +261,11 @@ document.addEventListener('DOMContentLoaded', function () {
         deleteCookie('lastPlayedTrack');
     });
 
-    function playTrack(url) {
+    function playTrack(url, type) {
         audio.src = url.replace('http://', 'https://');
+        audio.type = type;
         audio.play();
-        setCookie('lastPlayedTrack', url, 1000);
+        setCookie('lastPlayedTrack', `${url}|${type}`, 1000);
     }
 
     // Функция для установки значения в куки
@@ -307,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const file = e.target.files[0];
         if (file) {
             const objectURL = URL.createObjectURL(file);
-            playTrack(objectURL);
+            playTrack(objectURL, file.type);
         }
     });
 
@@ -318,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const file = event.dataTransfer.files[0];
         if (file) {
             const objectURL = URL.createObjectURL(file);
-            audio.src = objectURL.replace('http://', 'https://');
+            playTrack(objectURL, file.type);
         }
     }
 
