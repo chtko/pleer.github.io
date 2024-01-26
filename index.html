@@ -2,62 +2,33 @@
 <html lang="en">
 
 <head>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const audio = document.getElementById('audio');
-            const lastPlayedTrack = getCookie('lastPlayedTrack');
-            if (lastPlayedTrack) {
-                const blob = dataURItoBlob(lastPlayedTrack);
-                const objectURL = URL.createObjectURL(blob);
-                audio.src = objectURL;
-                audio.play();
-            }
-        });
-
-        window.addEventListener('beforeunload', function (e) {
-            const audio = document.getElementById('audio');
-            const lastPlayedTrack = audio.src;
-            setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
-        });
-
-        // Функция для преобразования Data URI в Blob
-        function dataURItoBlob(dataURI) {
-            const byteString = atob(dataURI.split(',')[1]);
-            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-            const ab = new ArrayBuffer(byteString.length);
-            const ia = new Uint8Array(ab);
-            for (let i = 0; i < byteString.length; i++) {
-                ia[i] = byteString.charCodeAt(i);
-            }
-            return new Blob([ab], { type: mimeString });
-        }
-    </script>
 
     <script>
+    document.addEventListener('DOMContentLoaded', function () {
         const audio = document.getElementById('audio');
-        audio.volume = 0.25;
-
-        audio.addEventListener('ended', function () {
-            deleteCookie('lastPlayedTrack');
-        });
-
-        function playTrack(url) {
-            audio.src = url.replace('http://', 'https://');
+        const lastPlayedTrack = getCookie('lastPlayedTrack');
+        if (lastPlayedTrack) {
+            audio.src = lastPlayedTrack;
             audio.play();
-            const blob = dataURItoBlob(url);
-            setCookie('lastPlayedTrack', url, 1000);
         }
+    });
 
-        // ... (остальной код не изменился)
+    window.addEventListener('beforeunload', function (e) {
+        const audio = document.getElementById('audio');
+        const lastPlayedTrack = audio.src;
+        setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
+    });
+</script>
 
-        // Функция для установки значения в куки
-        function setCookie(name, value, days) {
-            const expires = new Date();
-            expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-            document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-        }
-    </script>
-
+    <script>
+    // Обработчик события перед выгрузкой страницы
+    window.addEventListener('beforeunload', function (e) {
+        const audio = document.getElementById('audio');
+        const lastPlayedTrack = audio.src;
+        setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
+    });
+</script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Музыкальный плеер</title>
@@ -111,6 +82,7 @@
         #dropArea.active {
             background-color: lightblue;
         }
+
     </style>
 </head>
 
@@ -135,9 +107,7 @@
 
         const lastPlayedTrack = getCookie('lastPlayedTrack');
         if (lastPlayedTrack) {
-            const blob = dataURItoBlob(lastPlayedTrack);
-            const objectURL = URL.createObjectURL(blob);
-            audio.src = objectURL;
+            audio.src = lastPlayedTrack;
             audio.play();
         }
 
@@ -146,26 +116,17 @@
         });
 
         function playTrack(url) {
-            audio.src = url;
+            audio.src = url.replace('http://', 'https://');
             audio.play();
-            const reader = new FileReader();
-            reader.onloadend = function () {
-                const dataURL = reader.result;
-                setCookie('lastPlayedTrack', dataURL, 1000);
-            };
-            fetch(url)
-                .then(response => response.blob())
-                .then(blob => reader.readAsDataURL(blob));
+            setCookie('lastPlayedTrack', url, 1000);
         }
 
-        // Функция для установки значения в куки
-        document.addEventListener('DOMContentLoaded', function () {
+       // Функция для установки значения в куки
+document.addEventListener('DOMContentLoaded', function () {
             const audio = document.getElementById('audio');
             const lastPlayedTrack = getCookie('lastPlayedTrack');
             if (lastPlayedTrack) {
-                const blob = dataURItoBlob(lastPlayedTrack);
-                const objectURL = URL.createObjectURL(blob);
-                audio.src = objectURL;
+                audio.src = lastPlayedTrack;
                 audio.play();
             }
         });
@@ -194,19 +155,7 @@
             }
             return null;
         }
-
-        // Функция для преобразования Data URI в Blob
-        function dataURItoBlob(dataURI) {
-            const byteString = atob(dataURI.split(',')[1]);
-            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-            const ab = new ArrayBuffer(byteString.length);
-            const ia = new Uint8Array(ab);
-            for (let i = 0; i < byteString.length; i++) {
-                ia[i] = byteString.charCodeAt(i);
-            }
-            return new Blob([ab], { type: mimeString });
-        }
-
+		
     </script>
 
     <script>
@@ -282,7 +231,6 @@
             if (file) {
                 const objectURL = URL.createObjectURL(file);
                 audio.src = objectURL.replace('http://', 'https://');
-                playTrack(objectURL);
             }
         }
 
@@ -297,101 +245,93 @@
         }
     </script>
 
-    <script>
-        const audio = document.getElementById('audio');
-        audio.volume = 0.25;
+<script>
+    const audio = document.getElementById('audio');
+    audio.volume = 0.25;
 
-        audio.addEventListener('ended', function () {
-            deleteCookie('lastPlayedTrack');
-        });
+    audio.addEventListener('ended', function () {
+        deleteCookie('lastPlayedTrack');
+    });
 
-        function playTrack(url) {
+    function playTrack(url) {
+        audio.src = url.replace('http://', 'https://');
+        audio.play();
+        setCookie('lastPlayedTrack', url, 1000);
+    }
+
+    // Функция для установки значения в куки
+    function setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+    }
+
+    // Функция для удаления куки
+    function deleteCookie(name) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+    }
+
+    // Функция для получения значения из куки
+    function getCookie(name) {
+        const nameEQ = `${name}=`;
+        const cookies = document.cookie.split(';');
+        for (let i = 0; cookies && i < cookies.length; i++) {
+            let cookie = cookies[i];
+            while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
+            if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
+        }
+        return null;
+    }
+
+    function tryAudio(useHTTPS) {
+        const url = audioURL.value;
+        if (useHTTPS) {
             audio.src = url;
-            audio.play();
-            const reader = new FileReader();
-            reader.onloadend = function () {
-                const dataURL = reader.result;
-                setCookie('lastPlayedTrack', dataURL, 1000);
-            };
-            fetch(url)
-                .then(response => response.blob())
-                .then(blob => reader.readAsDataURL(blob));
+        } else {
+            audio.src = url.replace('https://', 'http://');
         }
 
-        // Функция для установки значения в куки
-        function setCookie(name, value, days) {
-            const expires = new Date();
-            expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-            document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+        audio.play()
+            .then(() => {
+                retryAttempts = 0;
+            })
+            .catch(error => {
+                if (retryAttempts > 0) {
+                    retryAttempts--;
+                    setTimeout(() => tryAudio(!useHTTPS), 3000);
+                }
+            });
+    }
+
+    audioFile.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const objectURL = URL.createObjectURL(file);
+            playTrack(objectURL);
         }
+    });
 
-        // Функция для удаления куки
-        function deleteCookie(name) {
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+    function dropHandler(event) {
+        event.preventDefault();
+        dropArea.classList.remove('active');
+        dropArea.classList.add('dragged-over');
+        const file = event.dataTransfer.files[0];
+        if (file) {
+            const objectURL = URL.createObjectURL(file);
+            audio.src = objectURL.replace('http://', 'https://');
         }
+    }
 
-        // Функция для получения значения из куки
-        function getCookie(name) {
-            const nameEQ = `${name}=`;
-            const cookies = document.cookie.split(';');
-            for (let i = 0; cookies && i < cookies.length; i++) {
-                let cookie = cookies[i];
-                while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
-                if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
-            }
-            return null;
-        }
+    function dragOverHandler(event) {
+        event.preventDefault();
+        dropArea.classList.add('active');
+    }
 
-        function tryAudio(useHTTPS) {
-            const url = audioURL.value;
-            if (useHTTPS) {
-                audio.src = url;
-            } else {
-                audio.src = url.replace('https://', 'http://');
-            }
-
-            audio.play()
-                .then(() => {
-                    retryAttempts = 0;
-                })
-                .catch(error => {
-                    if (retryAttempts > 0) {
-                        retryAttempts--;
-                        setTimeout(() => tryAudio(!useHTTPS), 3000);
-                    }
-                });
-        }
-
-        audioFile.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const objectURL = URL.createObjectURL(file);
-                playTrack(objectURL);
-            }
-        });
-
-        function dropHandler(event) {
-            event.preventDefault();
-            dropArea.classList.remove('active');
-            dropArea.classList.add('dragged-over');
-            const file = event.dataTransfer.files[0];
-            if (file) {
-                const objectURL = URL.createObjectURL(file);
-                audio.src = objectURL.replace('http://', 'https://');
-                playTrack(objectURL);
-            }
-        }
-
-        function dragOverHandler(event) {
-            event.preventDefault();
-            dropArea.classList.add('active');
-        }
-
-        function dragLeaveHandler(event) {
-            event.preventDefault();
-            dropArea.classList.remove('active');
-        }
-    </script>
+    function dragLeaveHandler(event) {
+        event.preventDefault();
+        dropArea.classList.remove('active');
+    }
+</script>
 
 </body>
 
