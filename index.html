@@ -34,12 +34,28 @@
     </script>
 
     <script>
-        // Обработчик события перед выгрузкой страницы
-        window.addEventListener('beforeunload', function (e) {
-            const audio = document.getElementById('audio');
-            const lastPlayedTrack = audio.src;
-            setCookie('lastPlayedTrack', lastPlayedTrack, 1000);
+        const audio = document.getElementById('audio');
+        audio.volume = 0.25;
+
+        audio.addEventListener('ended', function () {
+            deleteCookie('lastPlayedTrack');
         });
+
+        function playTrack(url) {
+            audio.src = url.replace('http://', 'https://');
+            audio.play();
+            const blob = dataURItoBlob(url);
+            setCookie('lastPlayedTrack', url, 1000);
+        }
+
+        // ... (остальной код не изменился)
+
+        // Функция для установки значения в куки
+        function setCookie(name, value, days) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+            document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+        }
     </script>
 
     <meta charset="UTF-8">
