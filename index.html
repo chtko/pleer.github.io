@@ -14,7 +14,7 @@
             }
         });
 
-        window.addEventListener('beforeunload', function () {
+        window.addEventListener('unload', function () {
             const audio = document.getElementById('audio');
             const lastPlayedTrackData = {
                 url: audio.src,
