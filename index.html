@@ -6,7 +6,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const audio = document.getElementById('audio');
-            const lastPlayedTrackData = getCookie('lastPlayedTrackData');
+            const lastPlayedTrackData = localStorage.getItem('lastPlayedTrackData');
             if (lastPlayedTrackData) {
                 const trackData = JSON.parse(lastPlayedTrackData);
                 audio.src = trackData.url;
@@ -14,7 +14,7 @@
             }
         });
 
-        window.addEventListener('beforeunload', function (e) {
+        window.addEventListener('beforeunload', function () {
             const audio = document.getElementById('audio');
             const lastPlayedTrackData = {
                 url: audio.src,
@@ -23,7 +23,7 @@
             if (audio.fileData) {
                 lastPlayedTrackData.fileData = audio.fileData;
             }
-            setCookie('lastPlayedTrackData', JSON.stringify(lastPlayedTrackData), 1000);
+            localStorage.setItem('lastPlayedTrackData', JSON.stringify(lastPlayedTrackData));
         });
     </script>
 
@@ -38,7 +38,7 @@
             if (audio.fileData) {
                 lastPlayedTrackData.fileData = audio.fileData;
             }
-            setCookie('lastPlayedTrackData', JSON.stringify(lastPlayedTrackData), 1000);
+            localStorage.setItem('lastPlayedTrackData', JSON.stringify(lastPlayedTrackData));
         });
     </script>
 
@@ -118,7 +118,7 @@
         const audio = document.getElementById('audio');
         audio.volume = 0.25;
 
-        const lastPlayedTrackData = getCookie('lastPlayedTrackData');
+        const lastPlayedTrackData = localStorage.getItem('lastPlayedTrackData');
         if (lastPlayedTrackData) {
             const trackData = JSON.parse(lastPlayedTrackData);
             audio.src = trackData.url;
@@ -127,7 +127,7 @@
         }
 
         audio.addEventListener('ended', function () {
-            deleteCookie('lastPlayedTrackData');
+            localStorage.removeItem('lastPlayedTrackData');
         });
 
         function playTrack(url, fileData) {
@@ -138,86 +138,24 @@
                 url: audio.src,
                 fileData: audio.fileData
             };
-            setCookie('lastPlayedTrackData', JSON.stringify(lastPlayedTrackData), 1000);
+            localStorage.setItem('lastPlayedTrackData', JSON.stringify(lastPlayedTrackData));
         }
 
-        // Функция для установки значения в куки
-        document.addEventListener('DOMContentLoaded', function () {
-            const audio = document.getElementById('audio');
-            const lastPlayedTrackData = getCookie('lastPlayedTrackData');
-            if (lastPlayedTrackData) {
-                const trackData = JSON.parse(lastPlayedTrackData);
-                audio.src = trackData.url;
-                audio.fileData = trackData.fileData;
-                audio.play();
-            }
-        });
-
-        window.addEventListener('beforeunload', function () {
-            const audio = document.getElementById('audio');
-            const lastPlayedTrackData = {
-                url: audio.src,
-                fileData: audio.fileData
-            };
-            setCookie('lastPlayedTrackData', JSON.stringify(lastPlayedTrackData), 1000);
-        });
-
-        // Функция для установки значения в куки
+        // Функция для получения значения из localStorage
         function setCookie(name, value, days) {
             const expires = new Date();
             expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
             document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
         }
 
-        // Функция для получения значения из куки
-        function getCookie(name) {
-            const nameEQ = `${name}=`;
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i];
-                while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
-                if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
-            }
-            return null;
+        // Функция для получения значения из localStorage
+        function deleteCookie(name) {
+            localStorage.removeItem(name);
         }
 
-    </script>
-
-    <script>
-        window.addEventListener('beforeunload', function (e) {
-            e.preventDefault();
-            e.returnValue = '';
-
-            const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
-            e.returnValue = confirmationMessage;
-            return confirmationMessage;
-        });
-    </script>
-
-    <div class="button-wrapper">
-        <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a,.m3u,.flac,.webm" id="audioFile" style="display: none">
-        <button onclick="document.getElementById('audioFile').click()">Загрузить музыку</button>
-    </div>
-
-    <div class="button-wrapper">
-        <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио или M3U-плейлист">
-        <button onclick="playInternetRadioWithRetries()">Воспроизвести музыку интернет радио по URL</button>
-        <a href="https://github.com/chtko/pleer.github.io" target="_blank">Информация</a>
-    </div>
-
-    <div id="dropArea" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
-        <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
-    </div>
-
-    <script>
-        const audioFile = document.getElementById('audioFile');
-        const audioURL = document.getElementById('audioURL');
-        const dropArea = document.getElementById('dropArea');
-        let retryAttempts = 3;
-
-        function playInternetRadioWithRetries() {
-            retryAttempts = 3;
-            tryAudio(true);
+        // Функция для получения значения из localStorage
+        function getCookie(name) {
+            return localStorage.getItem(name);
         }
 
         function tryAudio(useHTTPS) {
@@ -278,46 +216,40 @@
     </script>
 
     <script>
-        const audio = document.getElementById('audio');
-        audio.volume = 0.25;
+        window.addEventListener('beforeunload', function (e) {
+            e.preventDefault();
+            e.returnValue = '';
 
-        audio.addEventListener('ended', function () {
-            deleteCookie('lastPlayedTrackData');
+            const confirmationMessage = 'Вы уверены, что хотите покинуть страницу?';
+            e.returnValue = confirmationMessage;
+            return confirmationMessage;
         });
+    </script>
 
-        function playTrack(url, fileData) {
-            audio.src = url.replace('http://', 'https://');
-            audio.fileData = fileData;
-            audio.play();
-            const lastPlayedTrackData = {
-                url: audio.src,
-                fileData: audio.fileData
-            };
-            setCookie('lastPlayedTrackData', JSON.stringify(lastPlayedTrackData), 1000);
-        }
+    <div class="button-wrapper">
+        <input type="file" accept=".mp3,.ogg,.wav,.mp4,.m4a,.m3u,.flac,.webm" id="audioFile" style="display: none">
+        <button onclick="document.getElementById('audioFile').click()">Загрузить музыку</button>
+    </div>
 
-        // Функция для установки значения в куки
-        function setCookie(name, value, days) {
-            const expires = new Date();
-            expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-            document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-        }
+    <div class="button-wrapper">
+        <input type="url" id="audioURL" placeholder="Вставьте URL интернет радио или M3U-плейлист">
+        <button onclick="playInternetRadioWithRetries()">Воспроизвести музыку интернет радио по URL</button>
+        <a href="https://github.com/chtko/pleer.github.io" target="_blank">Информация</a>
+    </div>
 
-        // Функция для удаления куки
-        function deleteCookie(name) {
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
-        }
+    <div id="dropArea" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
+        <p>Перетащите файл с музыкой сюда, чтобы воспроизвести его в плеере</p>
+    </div>
 
-        // Функция для получения значения из куки
-        function getCookie(name) {
-            const nameEQ = `${name}=`;
-            const cookies = document.cookie.split(';');
-            for (let i = 0; cookies && i < cookies.length; i++) {
-                let cookie = cookies[i];
-                while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
-                if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
-            }
-            return null;
+    <script>
+        const audioFile = document.getElementById('audioFile');
+        const audioURL = document.getElementById('audioURL');
+        const dropArea = document.getElementById('dropArea');
+        let retryAttempts = 3;
+
+        function playInternetRadioWithRetries() {
+            retryAttempts = 3;
+            tryAudio(true);
         }
 
         function tryAudio(useHTTPS) {
