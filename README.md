@@ -6,8 +6,7 @@
 Радио может работать со нормально если вы создадите файл и вставите туда этот код, потом надо сохранить этот файл с таким окончанием: .html (название может быть любым, у меня pleer.html) и надо открыть этот файл в браузере, и тогда радио может заработать (лично у меня оно заработало)
 <p align="center">
   <a href="https://chtko.github.io/pleer.github.io/">
-    <img src="https://img.shields.io/badge/pleer-chtko.github.io-brightgreen" alt="pleer">
+    <img src="https://img.shields.io/badge/ссылка-на%20плеер-brightgreen" alt="ссылка на плеер">
   </a>
 </p>
-
 
