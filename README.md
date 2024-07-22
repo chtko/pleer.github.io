@@ -1,10 +1,10 @@
 # Информация
 
 <p align="">
-  <a href="https://chtko.github.io/pleer.github.io/">
+  <a href="https://chtko.github.io/pleer.github.io/" target="_blank">
     <img src="https://img.shields.io/badge/ссылка-на%20плеер-brightgreen" alt="ссылка на плеер">
   </a>
-</p>
+</p
   
 Этот плеер полностью разработал ChatGPT-3.5.  
   
