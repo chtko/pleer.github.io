@@ -5,6 +5,7 @@
 В будущем я попробую сделать так что бы работало каждое радио по ссылке (не факт что оно работать будет).
 Радио может работать со нормально если вы создадите файл и вставите туда этот код, потом надо сохранить этот файл с таким окончанием: .html (название может быть любым, у меня pleer.html) и надо открыть этот файл в браузере, и тогда радио может заработать (лично у меня оно заработало)
 <p align="center">
-  <a href="https://embedchain.ai/slack">
-    <img src="https://img.shields.io/badge/slack-embedchain-brightgreen.svg?logo=slack" alt="Абоба">
+  <a href="https://embedchain.ai/slack" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 4px;">
+    embedchain
   </a>
+</p>
