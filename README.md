@@ -1,7 +1,7 @@
 # Информация
 
-<p align="">
-  <a href="https://chtko.github.io/pleer.github.io/" onclick="window.open(this.href, '_blank'); return false;">
+<p align="center">
+  <a href="https://chtko.github.io/pleer.github.io/" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/ссылка-на%20плеер-brightgreen" alt="ссылка на плеер">
   </a>
 </p>
