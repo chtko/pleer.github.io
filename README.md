@@ -1,11 +1,11 @@
 # Информация
 
-<p align="center">
-  <a href="https://chtko.github.io/pleer.github.io/" target="_blank" rel="noopener noreferrer">
+<p align="">
+  <a href="https://chtko.github.io/pleer.github.io/" target="_blank">
     <img src="https://img.shields.io/badge/ссылка-на%20плеер-brightgreen" alt="ссылка на плеер">
   </a>
 </p>
-  
+
 Этот плеер полностью разработал ChatGPT-3.5.  
   
 К сожилению функция: `Воспроизвести музыку интернет радио по URL` может работаеть не всегда. Из-за CORS...  
