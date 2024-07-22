@@ -4,4 +4,5 @@
 У меня получилось через код элемента найти ссылку на Радио Улитка (https://radioulitka.ru/mount), лишь только это ссылка пока работает. Радио работает только по протаколу HTTPS.
 В будущем я попробую сделать так что бы работало каждое радио по ссылке (не факт что оно работать будет).
 Радио может работать со нормально если вы создадите файл и вставите туда этот код, потом надо сохранить этот файл с таким окончанием: .html (название может быть любым, у меня pleer.html) и надо открыть этот файл в браузере, и тогда радио может заработать (лично у меня оно заработало)
-[![GitHub Repo stars](https://img.shields.io/github/stars/stirling-tools/stirling-pdf?style=social)](https://github.com/Stirling-Tools/stirling-pdf)
+[![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/frooodle/s-pdf/latest)](https://github.com/Stirling-Tools/Stirling-PDF/)
+
